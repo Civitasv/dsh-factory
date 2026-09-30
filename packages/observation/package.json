@@ -1,32 +1,17 @@
 {
-  "name": "@dsh-factory/observation",
-  "description": "Production observation and feedback normalization for DSH Factory.",
-  "version": "0.1.0",
+  "name": "@orven/internal-observation",
+  "version": "0.0.0",
+  "private": true,
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Civitasv/dsh-factory.git",
-    "directory": "packages/observation"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "engines": {
-    "node": "^22.19.0 || >=24.0.0"
+    }
   },
   "dependencies": {
-    "@dsh-factory/core": "workspace:^",
-    "@dsh-factory/evidence": "workspace:^"
+    "@orven/internal-domain": "workspace:*",
+    "@orven/internal-evidence": "workspace:*"
   },
   "scripts": {
     "build": "tsc -b"

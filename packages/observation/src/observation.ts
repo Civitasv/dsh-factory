@@ -12,8 +12,8 @@ import type {
   JsonValue,
   Relation,
   RelationId,
-} from '@dsh-factory/core'
-import { BUILTIN_EVIDENCE_KINDS } from '@dsh-factory/evidence'
+} from '@orven/internal-domain'
+import { BUILTIN_EVIDENCE_KINDS } from '@orven/internal-evidence'
 import type {
   HealthRule,
   ProductionMetricObservation,

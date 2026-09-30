@@ -5,7 +5,7 @@ import type {
   Evidence,
   EvidenceReality,
   EvidenceSubjectRef,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 
 export type CiTestStatus = 'passed' | 'failed' | 'cancelled'
 export type CiAnalysisStatus = 'completed' | 'cancelled'

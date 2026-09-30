@@ -3,11 +3,11 @@ import type {
   ActorRef,
   ArtifactId,
   ChangeId,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import {
   createBuiltInEvidenceRegistry,
   validateEvidence,
-} from '@dsh-factory/evidence'
+} from '@orven/internal-evidence'
 import {
   ingestProductionMetric,
   type HealthRule,

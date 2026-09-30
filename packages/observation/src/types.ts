@@ -8,7 +8,7 @@ import type {
   Finding,
   FindingSeverity,
   Relation,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 
 export type HealthComparator = 'lt' | 'lte' | 'gt' | 'gte'
 
