@@ -2,20 +2,21 @@
 
 ## Release surface
 
-Features 01-11 are implemented through CI/test Evidence ingestion.
+Features 01-12 are implemented through release preparation and deployment observation.
 
 ## Implemented
 
-- Change Graph through durable persistence and GitHub collaboration ingestion.
-- Provider-neutral CI Test Run and Static Analysis snapshots.
-- Content-addressed CI run Artifacts.
-- Reality-bound `factory/test-execution@1` and `factory/static-analysis@1` Evidence generation.
-- Deterministic passed/failed/cancelled mapping to supports/contradicts/inconclusive.
-- Feature-03 Registry validation remains the Evidence schema authority.
-- External CI status does not directly mutate Gates.
+- Change Graph through CI/test Evidence integration.
+- Release candidates require a satisfied final Release Gate at the same Graph Revision.
+- Content-addressed Release Plan and `release/candidate` Artifact.
+- Provider-neutral Deployment Port.
+- Immutable deployment receipt Artifact.
+- Reality-bound `factory/deployment-observation@1` Evidence.
+- Deployment success/failure/cancellation maps to supports/contradicts/inconclusive.
+- Successful deployment does not silently close Change.
 
 ## Active limitations
 
-- CI providers still need host-specific REST/webhook implementations.
-- Release/deployment model is next.
-- Production observation and Graph UI are not implemented.
+- Concrete deployment provider clients are host integrations.
+- Production health observation is next.
+- No end-user Graph UI.
