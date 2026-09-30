@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Typecheck, lint, test
+    name: Typecheck, lint, test, package
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -39,3 +39,6 @@ jobs:
 
       - name: Validate
         run: pnpm check
+
+      - name: Verify distribution
+        run: pnpm distribution:check

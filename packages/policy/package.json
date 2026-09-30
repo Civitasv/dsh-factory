@@ -1,17 +1,32 @@
 {
   "name": "@dsh-factory/policy",
-  "version": "0.0.0",
-  "private": true,
+  "description": "Evidence-driven gate and policy evaluation for DSH Factory.",
+  "version": "0.1.0",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Civitasv/dsh-factory.git",
+    "directory": "packages/policy"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
   },
   "dependencies": {
-    "@dsh-factory/core": "workspace:*",
-    "@dsh-factory/evidence": "workspace:*"
+    "@dsh-factory/core": "workspace:^",
+    "@dsh-factory/evidence": "workspace:^"
   },
   "scripts": {
     "build": "tsc -b"

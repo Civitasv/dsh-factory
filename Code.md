@@ -4,6 +4,8 @@ Use this as the first navigation surface for humans and agents.
 
 | Area | Source of truth | Implementation |
 | --- | --- | --- |
+| Architecture | `Docs/Architecture/Overview.md` | repository-wide |
+| Harness boundary | `Docs/Architecture/Harness Integration.md` | neutral packages + harness adapters |
 | Change Graph | `Docs/Specs/Feature-02 Change Graph.md` | `packages/core/`, `packages/events/` |
 | Evidence Protocol | `Docs/Specs/Feature-03 Evidence Protocol.md` | `packages/evidence/` |
 | Context Compilation | `Docs/Specs/Feature-04 Context Compilation.md` | `packages/context/` |
@@ -18,9 +20,10 @@ Use this as the first navigation surface for humans and agents.
 | Production Observation | `Docs/Specs/Feature-13 Production Observation.md` | `packages/observation/` |
 | Graph UI | `Docs/Specs/Feature-14 Graph UI.md` | `packages/graph-ui/` |
 | DSH Plugin Runtime | `Docs/Specs/Feature-15 DSH Plugin Runtime.md` | `packages/plugin-dsh/` |
+| Distribution / portability | `Docs/Specs/Feature-16 Plugin Distribution and Harness Portability.md` | package manifests, `scripts/verify-distribution.mjs` |
 
-## Runtime boundary
+## Dependency boundary
 
-`packages/plugin-dsh` is the Factory composition root inside DSH. Internal Factory packages are libraries; they do not create a parallel harness.
+Harness-neutral packages never import Harness-specific APIs.
 
-DSH owns Agents, Sessions, models, tools, skills, sandbox/process execution, and Cordis lifecycle. Factory owns SDLC domain semantics and exposes them through `ctx.factory`.
+`packages/plugin-dsh` is the current outer adapter. A future Harness should receive a parallel adapter package rather than modifications to the neutral core.
