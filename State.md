@@ -2,21 +2,20 @@
 
 ## Release surface
 
-Features 01-09 are implemented through durable local Event Log persistence.
+Features 01-10 are implemented through GitHub collaboration ingestion.
 
 ## Implemented
 
-- Change Graph, Evidence, Context, Policy, Work, Execution, and DSH runtime integration.
-- Local filesystem Event Store format v1 with graph identity metadata.
-- Atomic logical batch publication through fsynced temp file + rename.
-- Optimistic per-Change concurrency survives reopen.
-- Duplicate Event identity survives reopen.
-- Process-local concurrent append serialization.
-- Durable replay through the existing Change Graph projector.
-- Corrupt JSON/history fails open rather than being silently repaired.
+- Change Graph, Evidence, Context, Policy, Work, Execution, DSH runtime, and durable local Event persistence.
+- Immutable content-addressed GitHub Issue/PR/commit Artifacts.
+- Replayable normalized GitHub snapshot metadata.
+- Explicit Issue-to-Change intent proposal with caller-selected Change kind.
+- GitHub mutable state is not used as Factory Gate/Change truth.
+- GitHub read transport is isolated behind a port.
 
 ## Active limitations
 
-- Persistence is a correctness-first local backend, not a multi-process/distributed store.
-- No GitHub/CI/release/production adapters yet.
+- No GitHub App/webhook transport implementation.
+- CI Check Run ingestion belongs to Feature-11.
+- No release/production adapters yet.
 - No end-user Graph UI.

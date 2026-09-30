@@ -9,6 +9,7 @@
     { "path": "./packages/work" },
     { "path": "./packages/execution" },
     { "path": "./packages/persistence" },
+    { "path": "./packages/integration-github" },
     { "path": "./packages/runtime-dsh" }
   ]
 }

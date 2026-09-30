@@ -81,6 +81,7 @@ export interface Artifact {
   readonly type: string
   readonly uri?: string
   readonly digest?: string
+  readonly metadata?: JsonValue
   readonly createdAt: string
   readonly createdBy: ActorRef
 }
