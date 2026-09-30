@@ -1,19 +1,50 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/core" },
-    { "path": "./packages/context" },
-    { "path": "./packages/evidence" },
-    { "path": "./packages/events" },
-    { "path": "./packages/policy" },
-    { "path": "./packages/work" },
-    { "path": "./packages/execution" },
-    { "path": "./packages/persistence" },
-    { "path": "./packages/integration-github" },
-    { "path": "./packages/integration-ci" },
-    { "path": "./packages/release" },
-    { "path": "./packages/observation" },
-    { "path": "./packages/graph-ui" },
-    { "path": "./packages/plugin-dsh" }
+    {
+      "path": "./packages/domain"
+    },
+    {
+      "path": "./packages/context"
+    },
+    {
+      "path": "./packages/evidence"
+    },
+    {
+      "path": "./packages/events"
+    },
+    {
+      "path": "./packages/policy"
+    },
+    {
+      "path": "./packages/work"
+    },
+    {
+      "path": "./packages/execution"
+    },
+    {
+      "path": "./packages/persistence"
+    },
+    {
+      "path": "./packages/integration-github"
+    },
+    {
+      "path": "./packages/integration-ci"
+    },
+    {
+      "path": "./packages/release"
+    },
+    {
+      "path": "./packages/observation"
+    },
+    {
+      "path": "./packages/graph-ui"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/plugin-dsh"
+    }
   ]
 }
