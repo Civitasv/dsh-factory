@@ -9,29 +9,20 @@ Use this as the first navigation surface for humans and agents.
 | Change Graph | `Docs/Specs/Feature-02 Change Graph.md` | `packages/core/`, `packages/events/` |
 | Evidence Protocol | `Docs/Specs/Feature-03 Evidence Protocol.md` | `packages/core/`, `packages/evidence/`, `packages/events/` |
 | Context Compilation | `Docs/Specs/Feature-04 Context Compilation.md` | `packages/core/`, `packages/context/` |
+| Gates and Policy | `Docs/Specs/Feature-05 Gates and Policy.md` | `packages/policy/` |
 | Event sourcing boundary | `Docs/Architecture/Overview.md` | `packages/events/` |
 | DSH/Cordis integration | `Docs/Architecture/DSH Integration.md` | `packages/runtime-dsh/` |
-| Repository foundation | `Docs/Specs/Feature-01 Repository Foundation.md` | `packages/core/`, `packages/events/`, `packages/runtime-dsh/` |
 | Validation | `Docs/Development/Validation.md` | `.github/workflows/ci.yml` |
 
 ## Dependency direction
 
-```text
-                  packages/core
-                ^      ^      ^
-                |      |      |
-          events   evidence   context
-                \      |      /
-                 integration/runtime
-```
-
-Domain capability packages depend inward on `core`. Runtime/integration packages depend on domain capabilities, never the reverse.
+Domain capability packages depend inward on `packages/core`. Policy consumes Evidence Coverage; runtime/integration packages remain outer layers.
 
 ## Change routing
 
-- Change / Criterion / Evidence / Finding / Gate / Run / Relation schemas -> `packages/core`.
-- Change Graph relation invariants -> `packages/core`.
-- Evidence kind validation, applicability and coverage -> `packages/evidence`.
-- deterministic GraphSlice/ContextPack compilation -> `packages/context`.
-- Event vocabulary, optimistic concurrency and graph projection -> `packages/events`.
-- Cordis plugin lifecycle and DSH integration -> `packages/runtime-dsh`.
+- domain schemas -> `packages/core`;
+- Evidence validation/applicability/coverage -> `packages/evidence`;
+- Context compilation -> `packages/context`;
+- Gate assessment and authority policy -> `packages/policy`;
+- Event vocabulary/projection -> `packages/events`;
+- DSH lifecycle -> `packages/runtime-dsh`.

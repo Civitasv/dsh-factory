@@ -2,38 +2,32 @@
 
 ## Release surface
 
-Repository foundation, Change Graph, Evidence Protocol, and deterministic Context Compilation are implemented. There is no end-user release yet.
+Features 01-05 foundations are implemented: repository baseline, Change Graph, Evidence Protocol, Context Compilation, and Gates/Policy.
 
 ## Implemented
 
-- pnpm TypeScript monorepo.
-- Change-centric event-sourced domain and deterministic Change Graph projection.
-- Immutable Criterion revisions and machine-readable Evidence Requirements.
-- Versioned, Reality-bound Evidence with validation, applicability, invalidation, and conflict-aware coverage.
-- Deterministic Context Compiler that pins one Graph Revision.
-- Explicit Context Query direction/relation/depth selection.
-- Subject-Evidence expansion for selected nodes and Criterion revisions.
-- Graph-size budgets with omitted lazy node references.
-- Per-node inclusion provenance.
-- Canonical ContextPack ordering and SHA-256 hashing.
-- GitHub Actions CI for typecheck, lint, and unit tests.
+- Change-centric event-sourced domain and deterministic graph projection.
+- Reality-bound Evidence validation/applicability/coverage.
+- Deterministic ContextPack compilation and hashing.
+- Exact Criterion-revision Gate Policies.
+- Pure Gate assessment from Evidence Coverage and Finding blockers.
+- Explicit authorized `not_required` decisions.
+- No direct human/agent override from missing Evidence to satisfied.
+- Deterministic Gate Evidence aggregation and assessment reasons.
+- GitHub Actions CI for typecheck, lint, and tests.
 
 ## Architecture baseline
 
-- Change-centric.
-- Event-sourced.
-- Graph-based domain relations.
-- Evidence-driven verification.
-- Context is compiled from the graph, not accumulated conversation history.
-- ContextPack is a projection, not a second source of truth.
-- Capability workers rather than persistent role agents.
-- DSH/Cordis is an execution adapter, not the domain owner.
+- Evidence answers what is known.
+- Policy answers whether that knowledge is sufficient.
+- Human subjective approval enters through Evidence such as human attestation.
+- Gate state is derived and does not become Change status.
+- DSH/Cordis remains an execution adapter.
 
 ## Active limitations
 
-- Gate/Policy authority and transition rules are not implemented.
 - Work/capability discovery and execution protocol are not implemented.
-- Production Change Graph persistence is not implemented.
-- No semantic/vector retrieval; Context Compilation is deterministic graph selection only.
-- No GitHub, CI, browser/QA, release, or production-observation adapter exists yet.
-- `runtime-dsh` does not yet execute Factory Work.
+- Production persistence is not implemented.
+- No GitHub/CI/release/production adapters.
+- DSH runtime does not yet execute Factory Work.
+- No end-user Graph UI.
