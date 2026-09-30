@@ -1,12 +1,8 @@
-import type { GraphRevision, EvidenceKindId, EvidenceRequirementId } from './ids.js'
-import type { JsonValue } from './json.js'
+import type { GraphRevision } from './ids.js'
 import type {
   ArtifactRef,
   CriterionRevisionRef,
-  DecisionRef,
   EvidenceRef,
-  FindingRef,
-  GraphNodeRef,
 } from './refs.js'
 import type {
   ArtifactId,
@@ -14,10 +10,13 @@ import type {
   CriterionId,
   DecisionId,
   EvidenceId,
+  EvidenceKindId,
+  EvidenceRequirementId,
   FindingId,
   GateId,
   RunId,
 } from './ids.js'
+import type { JsonValue } from './json.js'
 
 export interface ActorRef {
   readonly kind: 'human' | 'agent' | 'system'
@@ -85,7 +84,7 @@ export interface Artifact {
 }
 
 export type EvidenceSubjectRef =
-  | { readonly kind: 'node'; readonly node: GraphNodeRef }
+  | { readonly kind: 'node'; readonly node: import('./refs.js').GraphNodeRef }
   | { readonly kind: 'criterion_revision'; readonly revision: CriterionRevisionRef }
 
 export interface EvidenceReality {
@@ -222,23 +221,4 @@ export interface ExecutionBudget {
   readonly maxTokens?: number
   readonly maxCostUsd?: number
   readonly maxDurationMs?: number
-}
-
-export interface Provenance {
-  readonly source: GraphNodeRef
-  readonly reason: string
-}
-
-export interface ContextPack {
-  readonly changeId: ChangeId
-  readonly graphRevision: GraphRevision
-  readonly objective: string
-  readonly relevantDecisions: readonly DecisionRef[]
-  readonly findings: readonly FindingRef[]
-  readonly evidence: readonly EvidenceRef[]
-  readonly availableCapabilities: readonly string[]
-  readonly permissions: readonly string[]
-  readonly budget: ExecutionBudget
-  readonly provenance: readonly Provenance[]
-  readonly contextVersion: string
 }
