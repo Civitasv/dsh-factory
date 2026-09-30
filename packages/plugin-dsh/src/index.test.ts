@@ -42,6 +42,7 @@ describe('Orven plugin', () => {
         section: () => () => {},
       },
       on: () => () => {},
+      inject: () => () => {},
       logger: { warn: () => {} },
       provide: (nextKey: string, value: unknown) => {
         key = nextKey
