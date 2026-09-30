@@ -57,18 +57,21 @@ export class InMemoryEventStore {
       throw new Error('Append requires at least one event')
     }
 
-    if (request.changeId === undefined && request.expectedSequence !== undefined) {
+    const changeId = request.changeId
+    const expectedSequence = request.expectedSequence
+
+    if (changeId === undefined && expectedSequence !== undefined) {
       throw new Error('expectedSequence requires changeId')
     }
 
-    if (request.changeId !== undefined && request.expectedSequence === undefined) {
+    if (changeId !== undefined && expectedSequence === undefined) {
       throw new Error('Change-owned append requires expectedSequence')
     }
 
-    if (request.changeId !== undefined) {
-      const actual = this.currentSequence(request.changeId)
-      if (request.expectedSequence !== actual) {
-        throw new ConcurrencyConflictError(request.changeId, request.expectedSequence, actual)
+    if (changeId !== undefined && expectedSequence !== undefined) {
+      const actual = this.currentSequence(changeId)
+      if (expectedSequence !== actual) {
+        throw new ConcurrencyConflictError(changeId, expectedSequence, actual)
       }
     }
 
@@ -80,7 +83,7 @@ export class InMemoryEventStore {
       batchIds.add(pending.eventId)
     }
 
-    let sequence = request.changeId === undefined ? undefined : this.currentSequence(request.changeId)
+    let sequence = changeId === undefined ? undefined : this.currentSequence(changeId)
     const appended: EventEnvelope[] = []
 
     for (const pending of request.events) {
@@ -94,7 +97,7 @@ export class InMemoryEventStore {
         occurredAt: pending.occurredAt,
         actor: request.actor,
         event: pending.event as DomainEvent,
-        ...(request.changeId === undefined ? {} : { changeId: request.changeId }),
+        ...(changeId === undefined ? {} : { changeId }),
         ...(sequence === undefined ? {} : { sequence }),
         ...(request.causationId === undefined ? {} : { causationId: request.causationId }),
         ...(request.correlationId === undefined ? {} : { correlationId: request.correlationId }),
@@ -105,8 +108,8 @@ export class InMemoryEventStore {
       appended.push(envelope)
     }
 
-    if (request.changeId !== undefined && sequence !== undefined) {
-      this.#changeSequences.set(request.changeId, sequence)
+    if (changeId !== undefined && sequence !== undefined) {
+      this.#changeSequences.set(changeId, sequence)
     }
 
     return appended
