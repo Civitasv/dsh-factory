@@ -7,8 +7,8 @@ import type {
   EvidenceId,
   EvidenceRef,
   JsonValue,
-} from '@dsh-factory/core'
-import { BUILTIN_EVIDENCE_KINDS } from '@dsh-factory/evidence'
+} from '@orven/internal-domain'
+import { BUILTIN_EVIDENCE_KINDS } from '@orven/internal-evidence'
 import type {
   DeployReleaseInput,
   DeploymentObservation,

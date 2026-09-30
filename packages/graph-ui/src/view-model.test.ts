@@ -9,7 +9,7 @@ import {
   type FindingId,
   type GraphId,
   type RelationId,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import {
   buildGraphViewModel,
   graphNodeDetails,

@@ -3,13 +3,20 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "tsBuildInfoFile": "dist/.tsbuildinfo",
-    "types": ["node"]
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
   "references": [
-    { "path": "../core" },
-    { "path": "../evidence" },
-    { "path": "../policy" }
+    {
+      "path": "../domain"
+    },
+    {
+      "path": "../evidence"
+    },
+    {
+      "path": "../policy"
+    }
   ],
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts"
+  ]
 }

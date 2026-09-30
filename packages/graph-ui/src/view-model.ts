@@ -8,7 +8,7 @@ import {
   type GraphNode,
   type GraphNodeRef,
   type Relation,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import type {
   BuildGraphViewOptions,
   GraphNodeDetails,
