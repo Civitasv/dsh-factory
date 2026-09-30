@@ -44,6 +44,9 @@
     },
     {
       "path": "../graph-ui"
+    },
+    {
+      "path": "../application"
     }
   ],
   "include": [
