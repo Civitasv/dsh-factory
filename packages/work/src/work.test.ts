@@ -3,7 +3,7 @@ import {
   asGraphRevision,
   type ChangeId,
   type FindingId,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import {
   eligibleWorkers,
   materializeWork,
