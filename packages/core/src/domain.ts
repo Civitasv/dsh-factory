@@ -1,4 +1,5 @@
-import type { GraphRevision } from './ids.js'
+import type { GraphRevision, EvidenceKindId, EvidenceRequirementId } from './ids.js'
+import type { JsonValue } from './json.js'
 import type {
   ArtifactRef,
   CriterionRevisionRef,
@@ -49,16 +50,24 @@ export interface Criterion {
   readonly createdBy: ActorRef
 }
 
+export interface EvidenceKindRef {
+  readonly kind: EvidenceKindId
+  readonly version: number
+}
+
 export interface EvidenceRequirement {
-  readonly type: string
-  readonly description: string
+  readonly id: EvidenceRequirementId
+  readonly acceptedKinds: readonly EvidenceKindRef[]
+  readonly requiredResult: 'supports'
+  readonly minimumCount: number
+  readonly reality: 'current'
+  readonly description?: string
 }
 
 export interface CriterionRevision {
   readonly criterionId: CriterionId
   readonly revision: number
   readonly statement: string
-  readonly verificationMode: 'automated' | 'agent' | 'human' | 'hybrid'
   readonly evidenceRequirements: readonly EvidenceRequirement[]
   readonly severity: 'required' | 'recommended'
   readonly source?: ArtifactRef
@@ -79,14 +88,50 @@ export type EvidenceSubjectRef =
   | { readonly kind: 'node'; readonly node: GraphNodeRef }
   | { readonly kind: 'criterion_revision'; readonly revision: CriterionRevisionRef }
 
+export interface EvidenceReality {
+  readonly targets: readonly ArtifactRef[]
+  readonly environment: readonly ArtifactRef[]
+  readonly configuration: readonly ArtifactRef[]
+}
+
+export type EvidenceSourceRole = 'observation' | 'procedure' | 'raw_output' | 'attachment'
+
+export interface EvidenceSource {
+  readonly artifact: ArtifactRef
+  readonly role: EvidenceSourceRole
+}
+
+export type EvidenceResult = 'supports' | 'contradicts' | 'inconclusive'
+
 export interface Evidence {
   readonly id: EvidenceId
-  readonly type: string
+  readonly kind: EvidenceKindId
+  readonly kindVersion: number
   readonly claim: string
-  readonly result: 'supports' | 'contradicts' | 'inconclusive'
-  readonly sources: readonly ArtifactRef[]
+  readonly result: EvidenceResult
   readonly subjects: readonly EvidenceSubjectRef[]
+  readonly reality: EvidenceReality
+  readonly sources: readonly EvidenceSource[]
   readonly observedAt: string
+  readonly payload: JsonValue
+}
+
+export type EvidenceInvalidationReason =
+  | 'corrupt_source'
+  | 'wrong_target'
+  | 'invalid_procedure'
+  | 'incorrect_observation'
+  | 'revoked_attestation'
+  | 'duplicate'
+  | 'other'
+
+export interface EvidenceInvalidationRecord {
+  readonly evidenceId: EvidenceId
+  readonly reason: EvidenceInvalidationReason
+  readonly basis: readonly EvidenceRef[]
+  readonly invalidatedAt: string
+  readonly invalidatedBy: ActorRef
+  readonly detail?: string
 }
 
 export type FindingType =

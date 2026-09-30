@@ -6,6 +6,7 @@ import type {
   CriterionRevision,
   Decision,
   Evidence,
+  EvidenceInvalidationRecord,
   Finding,
   FindingLifecycleRecord,
   Gate,
@@ -68,6 +69,7 @@ export interface ChangeGraphSnapshot {
   readonly relations: readonly Relation[]
   readonly retiredRelationIds: readonly RelationId[]
   readonly criterionRevisions: readonly CriterionRevision[]
+  readonly evidenceInvalidations: readonly EvidenceInvalidationRecord[]
   readonly changeDispositions: readonly ChangeDispositionRecord[]
   readonly findingLifecycles: readonly FindingLifecycleRecord[]
   readonly gateEvaluations: readonly GateEvaluation[]
