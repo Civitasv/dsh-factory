@@ -1,6 +1,6 @@
 param(
     [Parameter(Position = 0)]
-    [ValidateSet("install", "update", "dump", "run", "uninstall", "paths", "help")]
+    [ValidateSet("install", "update", "dump", "run", "uninstall", "reset", "paths", "help")]
     [string]$Command = "install",
 
     [Parameter(Position = 1, ValueFromRemainingArguments = $true)]
@@ -10,7 +10,8 @@ param(
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
-$ProfileName = if ($env:ORVEN_DSH_PROFILE) { $env:ORVEN_DSH_PROFILE } else { "orven-test" }
+$ProfileName = if ($env:ORVEN_DSH_PROFILE) { $env:ORVEN_DSH_PROFILE } else { "orven" }
+$TemplateName = if ($env:ORVEN_DSH_TEMPLATE) { $env:ORVEN_DSH_TEMPLATE } else { "web" }
 $RootDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 
 $PackRoot = if ($env:ORVEN_PACK_ROOT) {
@@ -31,6 +32,7 @@ $DshHome = if ($env:DSH_HOME) {
 
 $ProfileDir = Join-Path (Join-Path $DshHome "profiles") $ProfileName
 $WorkspaceFile = Join-Path $ProfileDir "pnpm-workspace.yaml"
+$ProfileMarker = Join-Path $ProfileDir ".orven-local-profile"
 
 $BeginMarker = "# >>> orven-local core override"
 $EndMarker = "# <<< orven-local core override"
@@ -67,19 +69,70 @@ Usage:
   .\scripts\orven-local.ps1 install
   .\scripts\orven-local.ps1 update
   .\scripts\orven-local.ps1 dump
-  .\scripts\orven-local.ps1 run [prompt...]
+  .\scripts\orven-local.ps1 run [app args...]
   .\scripts\orven-local.ps1 uninstall
+  .\scripts\orven-local.ps1 reset
   .\scripts\orven-local.ps1 paths
 
 Environment:
-  ORVEN_DSH_PROFILE   DSH profile name     (default: orven-test)
-  ORVEN_PACK_ROOT     Packed artifact root (default: ~/.cache/orven-dsh-local)
-  ORVEN_FULL_CHECK=1  Run full checks/distribution verification before install
-  DSH_HOME            DSH home             (default: ~/.dsh)
+  ORVEN_DSH_PROFILE    DSH profile name     (default: orven)
+  ORVEN_DSH_TEMPLATE   Initial DSH template (default: web)
+  ORVEN_PACK_ROOT      Packed artifact root (default: ~/.cache/orven-dsh-local)
+  ORVEN_FULL_CHECK=1   Run full checks/distribution verification before install
+  DSH_HOME             DSH home             (default: ~/.dsh)
 
-The script never fetches, resets, or switches Git branches.
-It always tests the working tree that contains this script.
+On first install the script creates the dedicated profile from the selected DSH
+template. Later installs reuse that profile. The script never fetches, resets, or
+switches Git branches and always tests the current working tree.
+
+Typical:
+  .\scripts\orven-local.ps1 install
+  .\scripts\orven-local.ps1 dump
+  .\scripts\orven-local.ps1 run
+  .\scripts\orven-local.ps1 run --no-open
 "@
+}
+
+
+function Ensure-Profile {
+    if (Test-Path $ProfileDir -PathType Container) {
+        Write-Host "==> Using existing DSH profile: $ProfileName"
+        return
+    }
+
+    Write-Host "==> Initializing DSH profile '$ProfileName' from '$TemplateName'"
+    & dsh --profile $ProfileName --from-default-profile $TemplateName --dump-config | Out-Null
+
+    if ($LASTEXITCODE -ne 0) {
+        Fail "dsh profile initialization exited with code $LASTEXITCODE"
+    }
+
+    New-Item -ItemType Directory -Path $ProfileDir -Force | Out-Null
+    Set-Content -Path $ProfileMarker -Encoding utf8 -Value @(
+        "created-by=orven-local",
+        "template=$TemplateName"
+    )
+}
+
+function Require-Profile {
+    if (-not (Test-Path $ProfileDir -PathType Container)) {
+        Fail "DSH profile '$ProfileName' does not exist. Run .\scripts\orven-local.ps1 install first."
+    }
+}
+
+function Reset-Profile {
+    if (-not (Test-Path $ProfileDir -PathType Container)) {
+        Write-Host "==> DSH profile '$ProfileName' is already absent"
+        return
+    }
+
+    if (-not (Test-Path $ProfileMarker -PathType Leaf)) {
+        Fail "refusing to delete non-managed DSH profile '$ProfileName'. Only profiles created by this script can be reset."
+    }
+
+    Write-Host "==> Removing script-managed DSH profile: $ProfileName"
+    Remove-Item $ProfileDir -Recurse -Force
+    Write-Host "==> Done. Run .\scripts\orven-local.ps1 install to recreate it from '$TemplateName'."
 }
 
 function Build-And-Pack {
@@ -176,6 +229,7 @@ $EndMarker
 
 function Install-Local {
     $Packages = Build-And-Pack
+    Ensure-Profile
 
     Write-Host "==> Initializing DSH profile and installing @orven/core"
     Invoke-Native dsh plugin --profile $ProfileName add $Packages.Core
@@ -195,14 +249,16 @@ function Install-Local {
     Write-Host ""
     Write-Host "Next:"
     Write-Host "  .\scripts\orven-local.ps1 dump"
-    Write-Host '  .\scripts\orven-local.ps1 run "hello"'
+    Write-Host '  .\scripts\orven-local.ps1 run'
 }
 
 function Dump-Config {
+    Require-Profile
     Invoke-Native dsh --profile $ProfileName --dump-config
 }
 
 function Run-Dsh {
+    Require-Profile
     if ($null -eq $RemainingArgs -or $RemainingArgs.Count -eq 0) {
         & dsh --profile $ProfileName
     }
@@ -216,6 +272,11 @@ function Run-Dsh {
 }
 
 function Uninstall-Local {
+    if (-not (Test-Path $ProfileDir -PathType Container)) {
+        Write-Host "==> DSH profile '$ProfileName' is absent; nothing to uninstall"
+        return
+    }
+
     Write-Host "==> Removing Orven from DSH profile: $ProfileName"
     & dsh plugin --profile $ProfileName remove '@orven/plugin-dsh' '@orven/core'
 
@@ -232,7 +293,9 @@ function Show-Paths {
     Write-Host "packages:   $PackDir"
     Write-Host "dsh home:   $DshHome"
     Write-Host "profile:    $ProfileDir"
+    Write-Host "template:   $TemplateName"
     Write-Host "workspace:  $WorkspaceFile"
+    Write-Host "marker:     $ProfileMarker"
 }
 
 Require-Command pnpm
@@ -244,6 +307,7 @@ switch ($Command) {
     "dump"      { Dump-Config }
     "run"       { Run-Dsh }
     "uninstall" { Uninstall-Local }
+    "reset"     { Reset-Profile }
     "paths"     { Show-Paths }
     "help"      { Show-Usage }
 }
