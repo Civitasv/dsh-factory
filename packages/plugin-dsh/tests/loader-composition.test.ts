@@ -8,8 +8,6 @@ const driver = fileURLToPath(
 const config = fileURLToPath(
   new URL('./fixtures/cordis.yml', import.meta.url),
 )
-const tsx = import.meta.resolve('tsx')
-
 async function runLoaderComposition(): Promise<{
   readonly code: number | null
   readonly stdout: string
@@ -18,7 +16,7 @@ async function runLoaderComposition(): Promise<{
   return await new Promise((resolve, reject) => {
     const child = spawn(
       process.execPath,
-      ['--import', tsx, driver, config],
+      [driver, config],
       {
         cwd: process.cwd(),
         env: process.env,
