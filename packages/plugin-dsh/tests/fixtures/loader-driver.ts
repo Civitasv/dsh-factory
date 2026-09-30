@@ -29,6 +29,13 @@ try {
     throw new Error('Orven Loader smoke did not publish ctx.orven')
   }
 
+  const toolNames = ctx.tools.schemas().map(schema => schema.name).sort()
+  for (const required of ['orven_begin_change', 'orven_execute', 'orven_status']) {
+    if (!toolNames.includes(required)) {
+      throw new Error(`Orven Loader smoke missing tool ${required}`)
+    }
+  }
+
   const actor: ActorRef = { kind: 'system', id: 'loader-smoke' }
   const changeId = 'CHG-LOADER' as never
   await orven.append({
@@ -116,6 +123,7 @@ try {
     revision: Number(orven.currentRevision()),
     nodes: orven.snapshot().nodes.length,
     executionState: result.state,
+    tools: toolNames.filter(name => name.startsWith('orven_')),
   }) + '\n')
 } finally {
   await ctx.fiber.dispose()
