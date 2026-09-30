@@ -1,56 +1,103 @@
-# DSH Integration
+# DSH Plugin Integration
 
-## Technology boundary
+## Runtime model
 
-DeepSeek Harness plugins run in the JavaScript/Node/Cordis ecosystem. The upstream repository authors first-party packages in TypeScript and emits JavaScript. DSH's own package cookbook describes plugin entry points as TypeScript `src/index.ts` files with the namespace-plugin shape.
+DeepSeek Harness is the harness and runtime host.
 
-DSH Factory therefore uses TypeScript for all first-party packages.
+DSH Factory is an SDLC plugin that runs inside the same Cordis service graph.
 
-This is a source-language choice, not a claim that the runtime can execute TypeScript only. The runtime ultimately loads JavaScript modules; TypeScript is the supported authoring baseline for this repository.
-
-## Upstream baseline
-
-At repository bootstrap, upstream DeepSeek Harness uses:
-
-- DSH `0.2.0-rc.2`;
-- pnpm `11.7.0`;
-- Node `^22.19.0 || >=24.0.0`;
-- TypeScript 6;
-- `@deepseek-ai/cordis` `4.0.4`.
-
-These versions are integration inputs, not domain contracts. DSH is still evolving, so its types must remain outside the core domain packages.
-
-## Plugin shape
-
-The initial adapter exposes the conventional Cordis namespace-plugin entry:
-
-```ts
-export const name = 'dsh-factory'
-
-export function apply(ctx: Context): void {
-  // Register DSH-facing capabilities here.
-}
+```text
+DeepSeek Harness
+|
++-- agents / agent-loop
++-- sessions
++-- models
++-- tools / skills
++-- sandbox
++-- host services
+|
++-- @dsh-factory/plugin-dsh
+      |
+      +-- ctx.factory
+      +-- Factory domain libraries
 ```
 
-Do not default-export `apply` merely for convenience; upstream DSH treats plugin metadata such as `inject` as part of the namespace plugin contract.
+Factory is not a second harness layered above DSH.
+
+## Public package
+
+The deployable Factory host package is `@dsh-factory/plugin-dsh`.
+
+It is a namespace plugin with named `name`, `inject`, `Config`, and `apply` exports and no default `apply` export.
+
+The plugin declares the public DSH `agents` dependency and publishes one primary Factory service: `ctx.factory`.
 
 ## Ownership
 
-DeepSeek Harness owns:
+DeepSeek Harness owns model invocation/routing, Agent and Agent-loop lifecycle, Session mechanics, tools and skills, sandbox/process capabilities, Cordis lifecycle, and DSH host/client infrastructure.
 
-- model invocation;
-- tool and skill execution;
-- agent/session execution;
-- sandbox/process capabilities;
-- Cordis plugin lifecycle.
+DSH Factory owns Change Graph semantics, ContextPack construction, Evidence/Findings, Gates/Policy, Work and SDLC execution acceptance, Factory Event Log persistence, GitHub/CI/Release/Observation semantics, and Factory graph presentation.
 
-DSH Factory owns:
+A DSH Session is execution provenance. It is never the source of truth for Change state.
 
-- Change graph semantics;
-- ContextPack construction;
-- Evidence and Finding semantics;
-- Gates and policy;
-- orchestration decisions;
-- SDLC-specific persistence and projections.
+## Service boundary
 
-A DSH Session may be referenced by a Run, but it is not the source of truth for Change state.
+Factory consumers inside DSH use `ctx.factory`.
+
+The initial service supports current Graph Revision and Change sequence, deterministic graph projection, semantic Event append, Work preparation against the current snapshot, execution through `ctx.agents`, and prepare-and-execute convenience.
+
+The service does not cache a second graph state.
+
+## Execution
+
+```text
+ctx.factory.executeWork()
+        |
+        v
+ctx.agents.create()
+        |
+        v
+Agent.inject(ContextPack)
+        |
+        v
+Agent.followup(Work objective)
+        |
+        v
+DSH model/tools/skills/sandbox
+        |
+        v
+DshOutcomeCollector
+        |
+        v
+Feature-07 freshness acceptance
+```
+
+Factory never imports the concrete DSH agent-loop implementation. A production DSH composition normally supplies the AgentFactory through agent-loop. Tests may register a deterministic AgentFactory through the same public AgentRegistry contract.
+
+## Persistence
+
+Without a `persistenceDirectory` plugin configuration, `ctx.factory` owns an `InMemoryEventStore`.
+
+With `persistenceDirectory` configured, plugin activation opens the Feature-09 `JsonlEventStore` before `ctx.factory` is published.
+
+Failure to open/replay the Event Log fails plugin activation rather than publishing a half-ready service.
+
+## Trust boundary
+
+Agent prose and arbitrary Session history are not Evidence.
+
+Typed `WorkerOutcome` enters through the explicit `DshOutcomeCollector` seam. A future standard collector may define a structured output protocol, but it must retain the Evidence rules from Feature-03.
+
+## Composition proof
+
+Feature-15 requires a real Loader/process smoke using a test `cordis.yml`.
+
+The smoke mounts the actual DSH AgentRegistry and actual Factory plugin. Only the AgentFactory/model-driver side is replaced with a deterministic keyless test implementation.
+
+This proves the plugin is loadable and executable inside the DSH service graph without relying only on hand-built adapter mocks.
+
+## Version baseline
+
+Feature-15 targets `@deepseek-ai/cordis` 4.0.4, DSH public packages 0.2.0-rc.2, and the current public Cordis Loader/Include packages used by this repository.
+
+These dependencies remain isolated to `packages/plugin-dsh`.

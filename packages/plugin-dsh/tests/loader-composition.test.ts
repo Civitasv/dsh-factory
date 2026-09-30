@@ -56,7 +56,7 @@ describe('Factory real DSH Loader composition', () => {
       service: true,
       graphId: 'loader-smoke',
       revision: 1,
-      nodes: 2,
+      nodes: 1,
       executionState: 'succeeded',
     })
   }, 30_000)

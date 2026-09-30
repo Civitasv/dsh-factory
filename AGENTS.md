@@ -2,7 +2,7 @@
 
 ## Purpose
 
-DSH Factory is an AI-native software-development runtime layered on DeepSeek Harness. Changes must preserve a small domain core, reproducible evidence, and repository structure that agents can navigate without loading the whole tree.
+DSH Factory is an AI-native SDLC plugin for DeepSeek Harness. DSH is the harness/runtime host; Factory contributes the software-development domain, orchestration, persistence, integrations, and graph presentation through one DSH plugin service. Changes must preserve a small domain core, reproducible evidence, and repository structure that agents can navigate without loading the whole tree.
 
 ## Working rules
 
@@ -12,7 +12,7 @@ DSH Factory is an AI-native software-development runtime layered on DeepSeek Har
 4. **No text-only completion claims.** A durable state transition requires structured evidence or an explicit policy decision.
 5. **One mutable fact, one owner.** Do not duplicate Change state, Gate state, Run state, or DSH session truth for UI convenience.
 6. **Keep the domain independent from DSH.** `packages/core` and `packages/events` must not import Cordis or DSH packages.
-7. **DSH is an adapter boundary.** Cordis/DSH-specific code belongs under `packages/runtime-dsh` or future integration packages.
+7. **DSH is the host.** Cordis/DSH-specific runtime code belongs under `packages/plugin-dsh`. Factory must not implement a parallel Agent loop, Session runtime, model router, tool runtime, or sandbox.
 8. **Agents are workers, not domain entities.** Persist Runs, Events, Artifacts, Evidence, Findings, and Decisions; do not model long-lived ProductAgent/DevAgent/QAAgent identities as architecture.
 9. **Context is compiled, not accumulated chat.** Future ContextPack generation must select the minimal sufficient graph neighborhood with provenance.
 10. **Prefer immutable values and explicit discriminated unions.** Avoid ambient global state and hidden lifecycle ownership.

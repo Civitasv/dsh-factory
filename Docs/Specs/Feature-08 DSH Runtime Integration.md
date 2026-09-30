@@ -1,5 +1,7 @@
 # Feature-08 DSH Runtime Integration
 
+> Public packaging note: Feature-15 DSH Plugin Runtime supersedes the `runtime-dsh` package and `ctx.dshFactoryRuntime` service names. The execution lifecycle and public `ctx.agents` seam specified here remain authoritative implementation semantics inside `packages/plugin-dsh`.
+
 ## Objective
 
 Implement Feature-07's runtime-neutral Execution Protocol on top of DeepSeek Harness without moving Factory domain ownership into DSH.

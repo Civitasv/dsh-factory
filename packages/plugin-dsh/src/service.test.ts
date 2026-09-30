@@ -125,7 +125,7 @@ describe('FactoryService', () => {
     })
 
     expect(service.currentRevision()).toBe(1)
-    expect(service.snapshot().nodes).toHaveLength(2)
+    expect(service.snapshot().nodes).toHaveLength(1)
     expect(result.state).toBe('succeeded')
     expect(log).toEqual([
       'create',

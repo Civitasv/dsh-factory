@@ -1,31 +1,30 @@
 # DSH Factory
 
-AI-native software development runtime built on top of DeepSeek Harness.
+AI-native software development plugin for DeepSeek Harness.
 
-The project is **change-centric**, **event-sourced**, **graph-based**, and **evidence-driven**. DeepSeek Harness provides the agent execution substrate; DSH Factory owns the software-development domain model, context/evidence protocols, gates, policy, and orchestration.
+The project is **change-centric**, **event-sourced**, **graph-based**, and **evidence-driven**. DeepSeek Harness is the harness and runtime host; DSH Factory is an SDLC plugin installed into that Cordis service graph.
 
 ## Status
 
-Repository foundation only. The domain and execution protocols are being specified before higher-level Product/Development/QA/Release capabilities are implemented.
+Features 01-15 provide the Factory domain, evidence/context/policy/work/execution stack, DSH plugin service, persistence and integration protocols, and graph-first UI foundation.
 
 ## Architecture
 
 ```text
-DSH Factory
-  Domain model
-  Change graph
-  Event log
-  Context / Evidence protocols
-  Gates / Policy / Orchestration
-        |
-        v
 DeepSeek Harness / Cordis
-  Agent loop
-  Models
-  Tools
-  Skills
+  Agents / Agent loop
   Sessions
-  Sandboxes
+  Models
+  Tools / Skills
+  Sandbox
+        |
+        +-- @dsh-factory/plugin-dsh
+              |
+              +-- ctx.factory
+              +-- Change Graph
+              +-- Evidence / Context / Policy
+              +-- Work / Execution
+              +-- Integrations / Release / Observation
 ```
 
 See [Code.md](Code.md) for repository navigation and [Docs/Architecture/Overview.md](Docs/Architecture/Overview.md) for architecture boundaries.
