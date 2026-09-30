@@ -36,7 +36,7 @@ async function runLoaderComposition(): Promise<{
 }
 
 describe('Orven real DSH Loader composition', () => {
-  it('mounts ctx.factory and executes Work through the real AgentRegistry', async () => {
+  it('mounts ctx.orven and executes Work through the real AgentRegistry', async () => {
     const result = await runLoaderComposition()
 
     expect(result.code).toBe(0)

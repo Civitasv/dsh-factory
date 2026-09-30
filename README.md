@@ -34,7 +34,7 @@ After publication:
 dsh plugin --profile web add @orven/plugin-dsh
 ```
 
-The DSH Bundle mounts Orven and exposes the compatibility service `ctx.factory`.
+The DSH Bundle mounts Orven and exposes the Orven service `ctx.orven`.
 
 ## Development
 

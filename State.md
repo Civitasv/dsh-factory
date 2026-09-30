@@ -24,12 +24,11 @@ All fine-grained implementation modules are private `@orven/internal-*` workspac
 - Orven is the product; DSH is one Harness adapter.
 - Harness-specific dependencies cannot enter private neutral modules or `@orven/core`.
 - Event Log / Change Graph is authoritative regardless of Harness.
-- `ctx.factory` remains the DSH compatibility service name in Feature-17.
+- `ctx.orven` is the sole DSH/Cordis service identity; no `ctx.factory` alias is published.
 - Assistant prose is never promoted directly to Evidence.
 
 ## Remaining work
 
-- GitHub repository rename is owner-operated.
 - npm `@orven` scope ownership/credentials are external setup.
 - Packages are not yet actually published.
 - Standard production Outcome Collector remains caller-provided.
