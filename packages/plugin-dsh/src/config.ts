@@ -6,6 +6,6 @@ export interface Config {
 }
 
 export const Config: Schema<Config> = Schema.object({
-  graphId: Schema.string().pattern(/\S/u).default('factory'),
-  persistenceDirectory: Schema.string().pattern(/\S/u),
+  graphId: Schema.string().pattern(/\S/u).default('orven'),
+  persistenceDirectory: Schema.string().pattern(/\S/u).default('.orven'),
 })
