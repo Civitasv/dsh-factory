@@ -1,0 +1,10 @@
+- id: agents
+  name: '@deepseek-ai/dsh-agent'
+
+- id: factory-test-agent-factory
+  name: './fake-agent-factory.ts'
+
+- id: factory
+  name: '../../dist/index.js'
+  config:
+    graphId: loader-smoke

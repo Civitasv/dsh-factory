@@ -3,13 +3,16 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "tsBuildInfoFile": "dist/.tsbuildinfo"
+    "tsBuildInfoFile": "dist/.tsbuildinfo",
+    "types": ["node"]
   },
   "references": [
     { "path": "../core" },
     { "path": "../context" },
-    { "path": "../work" },
-    { "path": "../execution" }
+    { "path": "../events" },
+    { "path": "../execution" },
+    { "path": "../persistence" },
+    { "path": "../work" }
   ],
   "include": ["src/**/*.ts"]
 }
