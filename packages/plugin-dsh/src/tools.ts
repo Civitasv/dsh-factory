@@ -158,7 +158,7 @@ const statusOutput = {
           state: {
             type: 'string',
             required: true,
-            enum: ['pending', 'passed', 'failed', 'not_required'],
+            enum: ['pending', 'satisfied', 'failed', 'not_required'],
           },
           evidenceCount: { type: 'integer', required: true },
         },
