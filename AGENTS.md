@@ -18,6 +18,7 @@ DSH Factory is an AI-native software-development runtime layered on DeepSeek Har
 10. **Prefer immutable values and explicit discriminated unions.** Avoid ambient global state and hidden lifecycle ownership.
 11. **GitHub is source truth.** CI is GitHub Actions. This repository does not use CNB.
 12. **Do not claim Green without execution.** If tests or integration checks cannot run, report them as pending.
+13. **Merge Green PRs automatically.** When a PR's required GitHub Actions checks pass, it has no unresolved blocking review threads, its base is mergeable, and the intended scope is complete, squash-merge it without waiting for additional human confirmation. Do not merge on failed/pending CI, merge conflicts, blocking review feedback, or unresolved semantic ambiguity.
 
 ## TypeScript baseline
 
