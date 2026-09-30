@@ -19,6 +19,10 @@ die() {
   exit 1
 }
 
+need() {
+  command -v "$1" >/dev/null 2>&1 || die "missing required command: $1"
+}
+
 usage() {
   cat <<EOF
 Usage:
@@ -47,12 +51,7 @@ Typical:
   ./scripts/orven-local.sh run
   ./scripts/orven-local.sh run --no-open
 EOF
-}install
-  ./scripts/orven-local.sh dump
-  ./scripts/orven-local.sh run "hello"
-EOF
 }
-
 
 ensure_profile() {
   if [[ -d "$PROFILE_DIR" ]]; then
