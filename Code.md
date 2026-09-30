@@ -16,3 +16,4 @@ Use this as the first navigation surface for humans and agents.
 | CI/Test Integration | `Docs/Specs/Feature-11 CI and Test Integration.md` | `packages/integration-ci/` |
 | Release & Deployment | `Docs/Specs/Feature-12 Release and Deployment.md` | `packages/release/` |
 | Production Observation | `Docs/Specs/Feature-13 Production Observation.md` | `packages/observation/` |
+| Graph UI | `Docs/Specs/Feature-14 Graph UI.md` | `packages/graph-ui/` |
