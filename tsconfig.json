@@ -14,6 +14,6 @@
     { "path": "./packages/release" },
     { "path": "./packages/observation" },
     { "path": "./packages/graph-ui" },
-    { "path": "./packages/runtime-dsh" }
+    { "path": "./packages/plugin-dsh" }
   ]
 }
