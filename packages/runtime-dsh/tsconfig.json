@@ -7,7 +7,9 @@
   },
   "references": [
     { "path": "../core" },
-    { "path": "../events" }
+    { "path": "../context" },
+    { "path": "../work" },
+    { "path": "../execution" }
   ],
   "include": ["src/**/*.ts"]
 }
