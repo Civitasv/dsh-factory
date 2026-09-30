@@ -16,10 +16,10 @@ export const BUILTIN_EVIDENCE_KINDS = {
 } as const
 
 function record(payload: JsonValue, label: string): Readonly<Record<string, JsonValue>> {
-  if (payload === null || Array.isArray(payload) || typeof payload !== 'object') {
+  if (payload === null || typeof payload !== 'object' || Array.isArray(payload as unknown[])) {
     throw new Error(`${label} payload must be an object`)
   }
-  return payload
+  return payload as Readonly<Record<string, JsonValue>>
 }
 
 function stringField(value: JsonValue | undefined, label: string): string {
