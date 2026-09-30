@@ -8,7 +8,7 @@ Use this as the first navigation surface for humans and agents.
 | Domain vocabulary | `Docs/Architecture/Domain Model.md` | `packages/core/` |
 | Event sourcing boundary | `Docs/Architecture/Overview.md` | `packages/events/` |
 | DSH/Cordis integration | `Docs/Architecture/DSH Integration.md` | `packages/runtime-dsh/` |
-| V0.1 foundation contract | `Docs/Specs/V0.1 Foundation.md` | `packages/core/`, `packages/events/`, `packages/runtime-dsh/` |
+| Repository foundation | `Docs/Specs/Feature-01 Repository Foundation.md` | `packages/core/`, `packages/events/`, `packages/runtime-dsh/` |
 | Validation | `Docs/Development/Validation.md` | `.github/workflows/ci.yml` |
 
 ## Dependency direction

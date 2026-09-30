@@ -1,4 +1,4 @@
-# V0.1 Foundation
+# Feature-01 Repository Foundation
 
 ## Objective
 
@@ -6,7 +6,7 @@ Establish repository and architectural boundaries before implementing autonomous
 
 ## Scope
 
-V0.1 defines and validates:
+Feature-01 defines and validates:
 
 1. a pure Change-centric domain package;
 2. an append-only event vocabulary package;

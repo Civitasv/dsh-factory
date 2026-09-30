@@ -32,7 +32,7 @@ DSH Factory is an AI-native software-development runtime layered on DeepSeek Har
 ## Documentation ownership
 
 - `Docs/Architecture/` — current invariants, ownership, dependency direction, protocol boundaries.
-- `Docs/Specs/` — versioned product/runtime contracts and acceptance criteria.
+- `Docs/Specs/` — semantic feature contracts named `Feature-XX <Semantic Name>.md`, with acceptance criteria and explicit non-goals.
 - `Docs/Development/` — contributor and validation workflow.
 - `Code.md` — navigation map from concepts to source.
 - `State.md` — compact current snapshot, not a chronological diary.
