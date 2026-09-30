@@ -7,6 +7,7 @@ import {
   type CriterionId,
   type EventId,
   type EvidenceId,
+  type EvidenceKindId,
   type GraphId,
   type RelationId,
   type RunId,
@@ -22,6 +23,7 @@ const changeB = 'CHG-B' as ChangeId
 const criterionId = 'CRT-1' as CriterionId
 const artifactId = 'ART-1' as ArtifactId
 const actor: ActorRef = { kind: 'system', id: 'test' }
+const evidenceKind = 'factory/visual-observation' as EvidenceKindId
 
 function buildCriterionGraph() {
   const store = new InMemoryEventStore(graphId)
@@ -66,7 +68,6 @@ function buildCriterionGraph() {
             criterionId,
             revision: 1,
             statement: 'Pin closes before Editor activates',
-            verificationMode: 'automated',
             evidenceRequirements: [],
             severity: 'required',
             publishedAt: '2026-09-30T00:00:02Z',
@@ -93,6 +94,30 @@ function buildCriterionGraph() {
   return store
 }
 
+function visualEvidence(id: string, revision: number) {
+  return {
+    id: id as EvidenceId,
+    kind: evidenceKind,
+    kindVersion: 1,
+    claim: 'Pin closes before Editor activates',
+    result: 'supports' as const,
+    sources: [{ artifact: { id: artifactId }, role: 'observation' as const }],
+    subjects: [
+      {
+        kind: 'criterion_revision' as const,
+        revision: { criterionId, revision },
+      },
+    ],
+    reality: {
+      targets: [{ id: artifactId }],
+      environment: [],
+      configuration: [],
+    },
+    observedAt: '2026-09-30T00:00:04Z',
+    payload: { description: 'Observed expected window transition' },
+  }
+}
+
 describe('projectChangeGraph', () => {
   it('preserves immutable Criterion revisions and exact Evidence subjects', () => {
     const store = buildCriterionGraph()
@@ -107,20 +132,7 @@ describe('projectChangeGraph', () => {
           occurredAt: '2026-09-30T00:00:04Z',
           event: {
             type: 'evidence.recorded',
-            evidence: {
-              id: 'EVID-1' as EvidenceId,
-              type: 'ui_behavior',
-              claim: 'Pin closes before Editor activates',
-              result: 'supports',
-              sources: [{ id: artifactId }],
-              subjects: [
-                {
-                  kind: 'criterion_revision',
-                  revision: { criterionId, revision: 1 },
-                },
-              ],
-              observedAt: '2026-09-30T00:00:04Z',
-            },
+            evidence: visualEvidence('EVID-1', 1),
           },
         },
         {
@@ -132,7 +144,6 @@ describe('projectChangeGraph', () => {
               criterionId,
               revision: 2,
               statement: 'Pin closes, then Editor becomes key window',
-              verificationMode: 'automated',
               evidenceRequirements: [],
               severity: 'required',
               publishedAt: '2026-09-30T00:00:05Z',
@@ -173,7 +184,6 @@ describe('projectChangeGraph', () => {
               criterionId,
               revision: 3,
               statement: 'Skipped revision',
-              verificationMode: 'agent',
               evidenceRequirements: [],
               severity: 'required',
               publishedAt: '2026-09-30T00:00:04Z',
@@ -202,20 +212,7 @@ describe('projectChangeGraph', () => {
           occurredAt: '2026-09-30T00:00:04Z',
           event: {
             type: 'evidence.recorded',
-            evidence: {
-              id: 'EVID-1' as EvidenceId,
-              type: 'ui_behavior',
-              claim: 'Future revision',
-              result: 'supports',
-              sources: [{ id: artifactId }],
-              subjects: [
-                {
-                  kind: 'criterion_revision',
-                  revision: { criterionId, revision: 2 },
-                },
-              ],
-              observedAt: '2026-09-30T00:00:04Z',
-            },
+            evidence: visualEvidence('EVID-1', 2),
           },
         },
       ],
@@ -224,6 +221,51 @@ describe('projectChangeGraph', () => {
     expect(() => projectChangeGraph(graphId, store.readAll())).toThrow(
       'unpublished Criterion revision',
     )
+  })
+
+  it('projects Evidence invalidation without mutating the Evidence node', () => {
+    const store = buildCriterionGraph()
+
+    store.append({
+      changeId: changeA,
+      expectedSequence: 4,
+      actor,
+      events: [
+        {
+          eventId: 'EVT-5' as EventId,
+          occurredAt: '2026-09-30T00:00:04Z',
+          event: {
+            type: 'evidence.recorded',
+            evidence: visualEvidence('EVID-1', 1),
+          },
+        },
+        {
+          eventId: 'EVT-6' as EventId,
+          occurredAt: '2026-09-30T00:00:05Z',
+          event: {
+            type: 'evidence.invalidated',
+            evidenceId: 'EVID-1' as EvidenceId,
+            reason: 'invalid_procedure',
+            basis: [],
+            detail: 'The procedure skipped the Edit action',
+          },
+        },
+      ],
+    })
+
+    const graph = projectChangeGraph(graphId, store.readAll())
+
+    expect(graph.nodes.some(node => node.kind === 'evidence')).toBe(true)
+    expect(graph.evidenceInvalidations).toEqual([
+      {
+        evidenceId: 'EVID-1',
+        reason: 'invalid_procedure',
+        basis: [],
+        invalidatedAt: '2026-09-30T00:00:05Z',
+        invalidatedBy: actor,
+        detail: 'The procedure skipped the Edit action',
+      },
+    ])
   })
 
   it('rejects a depends_on cycle and permits it after the blocking edge is retired', () => {

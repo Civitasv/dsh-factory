@@ -7,7 +7,7 @@ The foundational vocabulary is intentionally small:
 - **Change** — durable intent to alter software behavior or structure.
 - **Criterion** — a stable acceptance-criterion identity with immutable revisions.
 - **Artifact** — a concrete input/output such as an intent source, commit, build, log, screenshot, trace, benchmark, or deployment.
-- **Evidence** — an immutable structured claim about observed reality, backed by Artifacts and exact subjects.
+- **Evidence** — an immutable structured observation with exact subjects, Reality, Artifact-backed sources, and a versioned semantic kind.
 - **Finding** — a mismatch between intended and observed reality.
 - **Decision** — an explicit durable choice.
 - **Gate** — a stable policy/verifiability boundary whose evaluations are event-derived.
@@ -17,7 +17,8 @@ The foundational vocabulary is intentionally small:
 
 Agents are intentionally absent from the domain graph. Workers are selected by capability and may disappear after a Run.
 
-The complete Change Graph contract is defined by `Docs/Specs/Feature-02 Change Graph.md`.
+The Change Graph contract is defined by `Docs/Specs/Feature-02 Change Graph.md`.
+The Evidence contract is defined by `Docs/Specs/Feature-03 Evidence Protocol.md`.
 
 ## Change
 
@@ -40,25 +41,29 @@ Criterion is a first-class node with stable identity.
 
 Criterion content is published as immutable, sequential revisions. Evidence must reference the exact Criterion revision it observed or verified. Publishing a new revision never rewrites historical Evidence.
 
-Criterion Revision is addressable domain history but is not a ninth top-level graph node kind.
+Criterion verification needs are machine-readable `EvidenceRequirement` values. The requirement list uses all-of semantics; each requirement's accepted Evidence kinds use any-of semantics. There is no separate `verificationMode` field.
 
 ## Artifact and Evidence
 
 Artifacts and Evidence are separate.
 
-A video is an Artifact. A statement that the video demonstrates a behavior on a particular reality is Evidence.
+A video is an Artifact. A statement that the video demonstrates a behavior on a specific build/environment/configuration is Evidence.
 
 Evidence records:
 
-- claim;
-- `supports | contradicts | inconclusive` result;
-- source Artifacts;
+- versioned semantic Evidence kind;
+- claim and `supports | contradicts | inconclusive` result;
 - exact subjects;
-- observation time.
+- explicit Reality;
+- typed Artifact-backed sources;
+- observation time;
+- JSON-compatible kind payload.
 
-An exact Evidence subject may refer to a top-level graph node or a specific Criterion revision.
+Evidence does not contain producer/run identity, mutable validity, `stale`, or a generic confidence score. Those concerns are graph/event provenance or derived evaluation.
 
-Historical Evidence is not marked false merely because current reality changes. Gate/policy evaluation determines whether that Evidence is applicable to the current revision.
+Historical Evidence is not stale merely because current Reality changes. Applicability is derived by comparing Evidence Reality with current Reality.
+
+If Evidence itself becomes untrustworthy, `evidence.invalidated` records that fact without mutating the Evidence node.
 
 ## Finding
 
@@ -73,6 +78,8 @@ A Finding that reveals behavior outside current intent/Criteria should normally 
 Gate identity is stable. Gate state is an event-derived evaluation, not Change status.
 
 Satisfied or failed evaluations require Evidence. Stage labels such as Development, Testing, or Ready to Release remain presentation projections.
+
+Feature-03 evaluates Evidence coverage only; Gate/Policy authority remains a later capability.
 
 ## Run
 
@@ -101,5 +108,7 @@ The Event Log is the source of truth.
 Semantic domain events are projected into the current Change Graph. A Graph Revision is the latest applied graph-wide event offset.
 
 Writes owned by a Change use optimistic concurrency against that Change's event sequence.
+
+Evidence kind validation occurs before append. Event replay checks deterministic structural references only and never repeats external tests, model calls, browser actions, or vendor validation.
 
 Production persistence remains a separate future capability; the in-memory Event Store currently acts as the executable contract for ordering and concurrency invariants.

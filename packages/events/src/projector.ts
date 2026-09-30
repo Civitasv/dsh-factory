@@ -4,11 +4,13 @@ import {
   createGateEvaluation,
   graphNodeKey,
   graphNodeRef,
+  type ArtifactRef,
   type ChangeDispositionRecord,
   type ChangeGraphSnapshot,
   type CriterionRevision,
   type Evidence,
   type EvidenceId,
+  type EvidenceInvalidationRecord,
   type EvidenceRef,
   type FindingId,
   type FindingLifecycleRecord,
@@ -41,6 +43,7 @@ export function projectChangeGraph(
   const relations = new Map<string, Relation>()
   const retiredRelationIds = new Set<RelationId>()
   const criterionRevisions = new Map<string, CriterionRevision[]>()
+  const evidenceInvalidations = new Map<EvidenceId, EvidenceInvalidationRecord>()
   const changeDispositions = new Map<string, ChangeDispositionRecord>()
   const findingLifecycles = new Map<string, FindingLifecycleRecord>()
   const gateEvaluations = new Map<string, GateEvaluation>()
@@ -62,15 +65,46 @@ export function projectChangeGraph(
     nodes.set(key, node)
   }
 
+  const requireArtifact = (artifact: ArtifactRef): void => {
+    requireNode({ kind: 'artifact', id: artifact.id })
+  }
+
   const requireEvidence = (ids: readonly EvidenceId[]): readonly EvidenceRef[] =>
     ids.map(id => {
       requireNode({ kind: 'evidence', id })
       return evidenceRef(id)
     })
 
-  const requireEvidenceSubjects = (evidence: Evidence): void => {
+  const requireEvidenceStructure = (evidence: Evidence): void => {
+    if (String(evidence.kind).trim() === '') {
+      throw new Error(`Evidence ${evidence.id} has an empty kind`)
+    }
+    if (!Number.isSafeInteger(evidence.kindVersion) || evidence.kindVersion <= 0) {
+      throw new Error(`Evidence ${evidence.id} has an invalid kind version`)
+    }
+    if (evidence.claim.trim() === '') {
+      throw new Error(`Evidence ${evidence.id} has an empty claim`)
+    }
+    if (evidence.subjects.length === 0) {
+      throw new Error(`Evidence ${evidence.id} requires at least one subject`)
+    }
+    if (evidence.reality.targets.length === 0) {
+      throw new Error(`Evidence ${evidence.id} requires at least one Reality target`)
+    }
+    if (evidence.sources.length === 0) {
+      throw new Error(`Evidence ${evidence.id} requires at least one Artifact source`)
+    }
+
     for (const source of evidence.sources) {
-      requireNode({ kind: 'artifact', id: source.id })
+      requireArtifact(source.artifact)
+    }
+
+    for (const artifact of [
+      ...evidence.reality.targets,
+      ...evidence.reality.environment,
+      ...evidence.reality.configuration,
+    ]) {
+      requireArtifact(artifact)
     }
 
     for (const subject of evidence.subjects) {
@@ -170,9 +204,26 @@ export function projectChangeGraph(
         break
 
       case 'evidence.recorded':
-        requireEvidenceSubjects(event.evidence)
+        requireEvidenceStructure(event.evidence)
         addNode({ kind: 'evidence', value: event.evidence })
         break
+
+      case 'evidence.invalidated': {
+        requireNode({ kind: 'evidence', id: event.evidenceId })
+        if (evidenceInvalidations.has(event.evidenceId)) {
+          throw new Error(`Evidence ${event.evidenceId} is already invalidated`)
+        }
+        const basis = requireEvidence(event.basis)
+        evidenceInvalidations.set(event.evidenceId, {
+          evidenceId: event.evidenceId,
+          reason: event.reason,
+          basis,
+          invalidatedAt: envelope.occurredAt,
+          invalidatedBy: envelope.actor,
+          ...(event.detail === undefined ? {} : { detail: event.detail }),
+        })
+        break
+      }
 
       case 'finding.opened':
         addNode({ kind: 'finding', value: event.finding })
@@ -268,6 +319,7 @@ export function projectChangeGraph(
     ),
     retiredRelationIds: [...retiredRelationIds],
     criterionRevisions: [...criterionRevisions.values()].flat(),
+    evidenceInvalidations: [...evidenceInvalidations.values()],
     changeDispositions: [...changeDispositions.values()],
     findingLifecycles: [...findingLifecycles.values()],
     gateEvaluations: [...gateEvaluations.values()],

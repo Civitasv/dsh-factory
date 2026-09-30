@@ -12,6 +12,7 @@ import type {
   EventOffset,
   Evidence,
   EvidenceId,
+  EvidenceInvalidationReason,
   Finding,
   FindingId,
   Gate,
@@ -34,6 +35,13 @@ export type DomainEvent =
   | { readonly type: 'criterion.revision.published'; readonly revision: CriterionRevision }
   | { readonly type: 'artifact.recorded'; readonly artifact: Artifact }
   | { readonly type: 'evidence.recorded'; readonly evidence: Evidence }
+  | {
+      readonly type: 'evidence.invalidated'
+      readonly evidenceId: EvidenceId
+      readonly reason: EvidenceInvalidationReason
+      readonly basis: readonly EvidenceId[]
+      readonly detail?: string
+    }
   | { readonly type: 'finding.opened'; readonly finding: Finding }
   | {
       readonly type: 'finding.reproduced'
