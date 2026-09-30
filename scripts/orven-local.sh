@@ -2,11 +2,9 @@
 set -euo pipefail
 
 PROFILE="${ORVEN_DSH_PROFILE:-orven-test}"
-REPO_URL="${ORVEN_REPO_URL:-https://github.com/Civitasv/orven.git}"
-BRANCH="${ORVEN_BRANCH:-master}"
-CACHE_ROOT="${ORVEN_LOCAL_ROOT:-${XDG_CACHE_HOME:-$HOME/.cache}/orven-dsh-local}"
-SRC_DIR="$CACHE_ROOT/repo"
-PACK_DIR="$CACHE_ROOT/packages"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PACK_ROOT="${ORVEN_PACK_ROOT:-${XDG_CACHE_HOME:-$HOME/.cache}/orven-dsh-local}"
+PACK_DIR="$PACK_ROOT/packages"
 DSH_HOME_DIR="${DSH_HOME:-$HOME/.dsh}"
 PROFILE_DIR="$DSH_HOME_DIR/profiles/$PROFILE"
 WORKSPACE_FILE="$PROFILE_DIR/pnpm-workspace.yaml"
@@ -26,20 +24,21 @@ need() {
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") install        Pull latest Orven, build, pack, and install into DSH
-  $(basename "$0") update         Same as install
-  $(basename "$0") dump           Show the composed DSH config
-  $(basename "$0") run [prompt]   Run DSH with the Orven test profile
-  $(basename "$0") uninstall      Remove Orven packages from the test profile
-  $(basename "$0") paths          Print local paths
+  ./scripts/orven-local.sh install        Build the current checkout and install it into DSH
+  ./scripts/orven-local.sh update         Rebuild/reinstall the current checkout
+  ./scripts/orven-local.sh dump           Show the composed DSH config
+  ./scripts/orven-local.sh run [prompt]   Run DSH with the Orven test profile
+  ./scripts/orven-local.sh uninstall      Remove Orven packages from the test profile
+  ./scripts/orven-local.sh paths          Print local paths
 
 Environment:
   ORVEN_DSH_PROFILE   DSH profile name     (default: orven-test)
-  ORVEN_REPO_URL      Git repository       (default: https://github.com/Civitasv/orven.git)
-  ORVEN_BRANCH        Git branch           (default: master)
-  ORVEN_LOCAL_ROOT    Local cache root     (default: ~/.cache/orven-dsh-local)
-  ORVEN_FULL_CHECK=1  Run pnpm check before packaging
+  ORVEN_PACK_ROOT     Packed artifact root (default: ~/.cache/orven-dsh-local)
+  ORVEN_FULL_CHECK=1  Run full checks/distribution verification before install
   DSH_HOME            DSH home             (default: ~/.dsh)
+
+The script never fetches, resets, or switches Git branches. It always tests the
+working tree that contains this script.
 
 Typical:
   ./scripts/orven-local.sh install
@@ -48,43 +47,28 @@ Typical:
 EOF
 }
 
-sync_repo() {
-  mkdir -p "$CACHE_ROOT"
-
-  if [[ ! -d "$SRC_DIR/.git" ]]; then
-    echo "==> Cloning Orven"
-    git clone "$REPO_URL" "$SRC_DIR"
-  else
-    echo "==> Updating Orven"
-    git -C "$SRC_DIR" fetch origin "$BRANCH"
-  fi
-
-  git -C "$SRC_DIR" checkout -B "$BRANCH" "origin/$BRANCH"
-  git -C "$SRC_DIR" reset --hard "origin/$BRANCH"
-
-  echo "==> Orven commit: $(git -C "$SRC_DIR" rev-parse --short HEAD)"
-}
-
 build_and_pack() {
+  echo "==> Using Orven checkout: $ROOT_DIR"
   echo "==> Installing workspace dependencies"
-  pnpm --dir "$SRC_DIR" install --no-frozen-lockfile
+  pnpm --dir "$ROOT_DIR" install --no-frozen-lockfile
 
   if [[ "${ORVEN_FULL_CHECK:-0}" == "1" ]]; then
     echo "==> Running full checks"
-    pnpm --dir "$SRC_DIR" check
+    pnpm --dir "$ROOT_DIR" check
+    pnpm --dir "$ROOT_DIR" distribution:check
+  else
+    echo "==> Building current checkout"
+    pnpm --dir "$ROOT_DIR" build
   fi
-
-  echo "==> Verifying distributable packages"
-  pnpm --dir "$SRC_DIR" distribution:check
 
   rm -rf "$PACK_DIR"
   mkdir -p "$PACK_DIR"
 
   echo "==> Packing @orven/core"
-  pnpm --dir "$SRC_DIR/packages/core" pack --pack-destination "$PACK_DIR"
+  pnpm --dir "$ROOT_DIR/packages/core" pack --pack-destination "$PACK_DIR"
 
   echo "==> Packing @orven/plugin-dsh"
-  pnpm --dir "$SRC_DIR/packages/plugin-dsh" pack --pack-destination "$PACK_DIR"
+  pnpm --dir "$ROOT_DIR/packages/plugin-dsh" pack --pack-destination "$PACK_DIR"
 
   CORE_TGZ="$(find "$PACK_DIR" -maxdepth 1 -type f -name 'orven-core-*.tgz' | head -n 1)"
   PLUGIN_TGZ="$(find "$PACK_DIR" -maxdepth 1 -type f -name 'orven-plugin-dsh-*.tgz' | head -n 1)"
@@ -116,9 +100,9 @@ write_core_override() {
 
   if grep -Eq '^[[:space:]]*overrides:[[:space:]]*$' "$WORKSPACE_FILE"; then
     die "$WORKSPACE_FILE already has an overrides: section not managed by this script.
-Use a dedicated profile (default: orven-test), or add:
+Use the dedicated profile (default: orven-test), or add:
   '@orven/core': 'file:$CORE_TGZ'
-to that existing overrides section manually."
+to the existing overrides section manually."
   fi
 
   cat >> "$WORKSPACE_FILE" <<EOF
@@ -131,7 +115,6 @@ EOF
 }
 
 install_local() {
-  sync_repo
   build_and_pack
 
   echo "==> Initializing DSH profile and installing @orven/core"
@@ -144,8 +127,9 @@ install_local() {
   dsh plugin --profile "$PROFILE" add "$PLUGIN_TGZ"
 
   echo
-  echo "==> Installed"
+  echo "==> Installed current checkout"
   echo "profile : $PROFILE"
+  echo "repo    : $ROOT_DIR"
   echo "core    : $CORE_TGZ"
   echo "plugin  : $PLUGIN_TGZ"
   echo
@@ -175,7 +159,7 @@ uninstall_local() {
 
 print_paths() {
   cat <<EOF
-repo:       $SRC_DIR
+repo:       $ROOT_DIR
 packages:   $PACK_DIR
 dsh home:   $DSH_HOME_DIR
 profile:    $PROFILE_DIR
@@ -184,7 +168,6 @@ EOF
 }
 
 main() {
-  need git
   need pnpm
   need dsh
 
