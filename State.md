@@ -2,25 +2,23 @@
 
 ## Release surface
 
-Features 01-07 foundations are implemented through the runtime-neutral Execution Protocol.
+Features 01-08 are implemented through the DeepSeek Harness runtime adapter.
 
 ## Implemented
 
-- Change Graph, Evidence, Context, Policy, and capability-based Work.
-- Freshness check before Work preparation.
-- ContextPack compilation bound to each prepared execution.
-- Explicit prepared/running/terminal lifecycle rules.
-- Second Graph Revision freshness check before accepting Worker outcome.
-- Stale outcomes cannot produce durable Run proposals.
-- Fresh outcomes map to durable Run records.
-- Failed-only bounded retry semantics.
-- Runtime adapters supply timestamps; protocol reads no global clock.
-- Structured output proposal boundary; diagnostics are not Evidence.
+- Change Graph, Evidence, Context, Policy, Work, and runtime-neutral Execution Protocol.
+- DSH integration uses public `ctx.agents` rather than agent-loop internals.
+- Deterministic Execution -> DSH Session identity.
+- Canonical Factory ContextPack injection before Work follow-up.
+- Owned DSH AgentHandle lifecycle with guaranteed disposal.
+- AbortSignal propagation to DSH agent cancellation.
+- Explicit DshOutcomeCollector seam for structured Factory output.
+- DSH completion still passes Feature-07 Graph freshness acceptance.
+- Cordis plugin publishes `ctx.dshFactoryRuntime`.
 
 ## Active limitations
 
-- DSH does not yet implement the execution adapter.
-- Domain Event append transaction remains outside Feature-07.
+- Outcome Collector implementations are application/integration-specific; free-form assistant prose is not trusted Evidence.
 - Production persistence is not implemented.
 - No GitHub/CI/release/production adapters.
 - No end-user Graph UI.

@@ -12,7 +12,7 @@ Use this as the first navigation surface for humans and agents.
 | Gates and Policy | `Docs/Specs/Feature-05 Gates and Policy.md` | `packages/policy/` |
 | Work and Capabilities | `Docs/Specs/Feature-06 Work and Capabilities.md` | `packages/work/` |
 | Execution Protocol | `Docs/Specs/Feature-07 Execution Protocol.md` | `packages/execution/` |
-| DSH/Cordis integration | `Docs/Architecture/DSH Integration.md` | `packages/runtime-dsh/` |
+| DSH Runtime Integration | `Docs/Specs/Feature-08 DSH Runtime Integration.md` | `packages/runtime-dsh/` |
 | Validation | `Docs/Development/Validation.md` | `.github/workflows/ci.yml` |
 
 ## Change routing
@@ -22,6 +22,6 @@ Use this as the first navigation surface for humans and agents.
 - Context -> `packages/context`;
 - Gates/Policy -> `packages/policy`;
 - Work/capabilities -> `packages/work`;
-- runtime-neutral execution transaction -> `packages/execution`;
+- runtime-neutral execution -> `packages/execution`;
 - Event Log/projection -> `packages/events`;
-- DSH lifecycle -> `packages/runtime-dsh`.
+- DSH public agent lifecycle adapter -> `packages/runtime-dsh`.
