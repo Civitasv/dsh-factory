@@ -3,14 +3,29 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "tsBuildInfoFile": "dist/.tsbuildinfo"
+    "tsBuildInfoFile": "dist/.tsbuildinfo",
+    "types": [
+      "node"
+    ]
   },
   "references": [
-    { "path": "../domain" },
-    { "path": "../events" },
-    { "path": "../evidence" },
-    { "path": "../work" },
-    { "path": "../execution" }
+    {
+      "path": "../domain"
+    },
+    {
+      "path": "../events"
+    },
+    {
+      "path": "../evidence"
+    },
+    {
+      "path": "../work"
+    },
+    {
+      "path": "../execution"
+    }
   ],
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts"
+  ]
 }
