@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
+  },
+  "references": [
+    { "path": "../domain" },
+    { "path": "../events" },
+    { "path": "../evidence" },
+    { "path": "../work" },
+    { "path": "../execution" }
+  ],
+  "include": ["src/**/*.ts"]
+}
