@@ -8,7 +8,7 @@ import type {
 } from '@deepseek-ai/dsh-agent'
 import type {} from '@deepseek-ai/dsh-agent'
 
-export const name = 'factory-loader-test-agent-factory'
+export const name = 'orven-loader-test-agent-factory'
 export const inject = ['agents']
 
 export function apply(ctx: Context): void {
@@ -23,7 +23,7 @@ export function apply(ctx: Context): void {
         followup: () => { log.push('followup') },
         whenIdle: async () => { log.push('idle') },
         cancel: () => { log.push('cancel') },
-        __factoryLoaderLog: log,
+        __orvenLoaderLog: log,
       } as unknown as Agent
 
       return {
@@ -41,6 +41,6 @@ export function apply(ctx: Context): void {
 
   ctx.effect(
     () => ctx.agents.setFactory(factory),
-    'factory-loader-test-agent-factory',
+    'orven-loader-test-agent-factory',
   )
 }

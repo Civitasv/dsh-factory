@@ -3,13 +3,13 @@ import { pathToFileURL } from 'node:url'
 import { Context } from '@deepseek-ai/cordis'
 import Include from '@deepseek-ai/cordis-plugin-include'
 import Loader from '@deepseek-ai/cordis-plugin-loader'
-import type { FactoryService } from '../../src/service.ts'
-import type { ActorRef } from '@dsh-factory/core'
-import type { WorkItem, CapabilityId } from '@dsh-factory/work'
+import type { OrvenService } from '../../src/service.ts'
+import type { ActorRef } from '@orven/core'
+import type { WorkItem, CapabilityId } from '@orven/core/work'
 
 const configPath = process.argv[2]
 if (configPath === undefined) {
-  throw new Error('Factory Loader smoke requires a cordis.yml path')
+  throw new Error('Orven Loader smoke requires a cordis.yml path')
 }
 
 const ctx = new Context()
@@ -24,9 +24,9 @@ try {
   })
   await ctx.loader.await()
 
-  const factory = ctx.get('factory') as FactoryService | undefined
+  const factory = ctx.get('factory') as OrvenService | undefined
   if (factory === undefined) {
-    throw new Error('Factory Loader smoke did not publish ctx.factory')
+    throw new Error('Orven Loader smoke did not publish ctx.factory')
   }
 
   const actor: ActorRef = { kind: 'system', id: 'loader-smoke' }
@@ -58,7 +58,7 @@ try {
     id: 'work:loader-smoke' as never,
     changeId,
     graphRevision: factory.currentRevision(),
-    objective: 'Prove Factory executes inside DSH',
+    objective: 'Prove Orven executes inside DSH',
     requiredCapabilities: [capability],
     priority: 'normal',
     source: {
@@ -91,11 +91,11 @@ try {
     collector: {
       collect: async (agent) => {
         const observed = (
-          agent as unknown as { readonly __factoryLoaderLog?: readonly string[] }
-        ).__factoryLoaderLog
+          agent as unknown as { readonly __orvenLoaderLog?: readonly string[] }
+        ).__orvenLoaderLog
         if (observed?.join(',') !== 'inject,followup,idle') {
           throw new Error(
-            'Factory Loader smoke observed wrong DSH lifecycle: '
+            'Orven Loader smoke observed wrong DSH lifecycle: '
               + JSON.stringify(observed),
           )
         }

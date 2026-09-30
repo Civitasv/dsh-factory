@@ -1,10 +1,10 @@
 - id: agents
   name: '@deepseek-ai/dsh-agent'
 
-- id: factory-test-agent-factory
+- id: orven-test-agent-factory
   name: './fake-agent-factory.ts'
 
-- id: factory
+- id: orven
   name: '../../dist/index.js'
   config:
-    graphId: loader-smoke
+    graphId: orven-loader-smoke
