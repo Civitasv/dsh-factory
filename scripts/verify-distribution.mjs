@@ -210,6 +210,7 @@ try {
       "await import('@orven/core/events')",
       "await import('@orven/core/context')",
       "await import('@orven/core/execution')",
+      "await import('@orven/core/application')",
       "await import('@orven/plugin-dsh')",
     ].join('; '),
   ], consumer)
