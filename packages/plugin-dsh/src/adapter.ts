@@ -74,7 +74,7 @@ export class DshExecutionAdapter {
             evidence: [],
             findings: [],
             decisions: [],
-            diagnostics: 'Factory execution cancelled by parent runtime.',
+            diagnostics: 'Orven execution cancelled by parent runtime.',
           }
         : await input.collector.collect(handle.agent, input.prepared)
 

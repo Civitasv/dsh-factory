@@ -28,7 +28,7 @@ async function createEventStore(
   config: OrvenPluginConfig,
 ): Promise<OrvenEventStore> {
   if (config.graphId.trim() === '') {
-    throw new Error('Factory graphId must be non-empty')
+    throw new Error('Orven graphId must be non-empty')
   }
 
   const graphId = config.graphId as GraphId
@@ -44,7 +44,7 @@ async function createEventStore(
 
 export async function apply(
   ctx: Context,
-  config: OrvenPluginConfig = { graphId: 'factory' },
+  config: OrvenPluginConfig = { graphId: 'orven' },
 ): Promise<void> {
   const store = await createEventStore(config)
   const service = new OrvenService(

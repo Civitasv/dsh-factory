@@ -25,7 +25,7 @@ export function orvenContextMessage(
     source: {
       kind: 'orven',
       form: 'snapshot',
-      sections: [{ name: 'Factory ContextPack', text }],
+      sections: [{ name: 'Orven ContextPack', text }],
     },
   })
 }
@@ -38,7 +38,7 @@ export function orvenWorkMessage(
       {
         type: 'text',
         text: [
-          'Execute this Orven Work objective against the injected Factory ContextPack.',
+          'Execute this Orven Work objective against the injected Orven ContextPack.',
           '',
           prepared.work.objective,
         ].join('\n'),

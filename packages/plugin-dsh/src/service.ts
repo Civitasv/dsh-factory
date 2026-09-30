@@ -24,7 +24,7 @@ import {
 } from './adapter.js'
 import type { OrvenEventStore } from './store.js'
 
-export interface FactoryPrepareWorkInput {
+export interface OrvenPrepareWorkInput {
   readonly work: WorkItem
   readonly worker: WorkerDescriptor
   readonly attempt: number
@@ -32,13 +32,13 @@ export interface FactoryPrepareWorkInput {
   readonly permissions?: readonly string[]
 }
 
-export interface FactoryExecutePreparedInput {
+export interface OrvenExecutePreparedInput {
   readonly prepared: PreparedExecution
   readonly collector: DshOutcomeCollector
   readonly signal?: AbortSignal
 }
 
-export interface FactoryExecuteWorkInput extends FactoryPrepareWorkInput {
+export interface OrvenExecuteWorkInput extends OrvenPrepareWorkInput {
   readonly collector: DshOutcomeCollector
   readonly signal?: AbortSignal
 }
@@ -70,7 +70,7 @@ export class OrvenService {
     return await this.store.append(request)
   }
 
-  prepareWork(input: FactoryPrepareWorkInput): PreparedExecution {
+  prepareWork(input: OrvenPrepareWorkInput): PreparedExecution {
     return prepareExecution({
       work: input.work,
       worker: {
@@ -89,7 +89,7 @@ export class OrvenService {
   }
 
   async executePrepared(
-    input: FactoryExecutePreparedInput,
+    input: OrvenExecutePreparedInput,
   ): Promise<ExecutionResult> {
     return await this.executor.execute({
       prepared: input.prepared,
@@ -100,7 +100,7 @@ export class OrvenService {
     })
   }
 
-  async executeWork(input: FactoryExecuteWorkInput): Promise<ExecutionResult> {
+  async executeWork(input: OrvenExecuteWorkInput): Promise<ExecutionResult> {
     const prepared = this.prepareWork(input)
     return await this.executePrepared({
       prepared,
