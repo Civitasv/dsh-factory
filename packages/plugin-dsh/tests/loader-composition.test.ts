@@ -48,6 +48,7 @@ describe('Orven real DSH Loader composition', () => {
       readonly revision: number
       readonly nodes: number
       readonly executionState: string
+      readonly tools: readonly string[]
     }
 
     expect(report).toEqual({
@@ -56,6 +57,7 @@ describe('Orven real DSH Loader composition', () => {
       revision: 1,
       nodes: 1,
       executionState: 'succeeded',
+      tools: ['orven_begin_change', 'orven_execute', 'orven_status'],
     })
   }, 30_000)
 })
