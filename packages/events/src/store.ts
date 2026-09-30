@@ -10,6 +10,18 @@ import {
 } from '@orven/internal-domain'
 import type { DomainEvent, EventEnvelope, PendingEvent } from './events.js'
 
+export class GraphRevisionConflictError extends Error {
+  constructor(
+    readonly expectedRevision: GraphRevision,
+    readonly actualRevision: GraphRevision,
+  ) {
+    super(
+      `Graph revision conflict: expected ${expectedRevision}, actual ${actualRevision}`,
+    )
+    this.name = 'GraphRevisionConflictError'
+  }
+}
+
 export class ConcurrencyConflictError extends Error {
   constructor(
     readonly changeId: ChangeId,
@@ -26,6 +38,7 @@ export class ConcurrencyConflictError extends Error {
 export interface AppendRequest {
   readonly changeId?: ChangeId
   readonly expectedSequence?: number
+  readonly expectedRevision?: GraphRevision
   readonly actor: ActorRef
   readonly causationId?: EventId
   readonly correlationId?: CorrelationId
@@ -59,6 +72,17 @@ export class InMemoryEventStore {
 
     const changeId = request.changeId
     const expectedSequence = request.expectedSequence
+    const expectedRevision = request.expectedRevision
+
+    if (
+      expectedRevision !== undefined &&
+      expectedRevision !== this.currentRevision()
+    ) {
+      throw new GraphRevisionConflictError(
+        expectedRevision,
+        this.currentRevision(),
+      )
+    }
 
     if (changeId === undefined && expectedSequence !== undefined) {
       throw new Error('expectedSequence requires changeId')
