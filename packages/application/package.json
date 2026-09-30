@@ -1,0 +1,22 @@
+{
+  "name": "@orven/internal-application",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@orven/internal-domain": "workspace:*",
+    "@orven/internal-events": "workspace:*",
+    "@orven/internal-evidence": "workspace:*",
+    "@orven/internal-work": "workspace:*",
+    "@orven/internal-execution": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}
