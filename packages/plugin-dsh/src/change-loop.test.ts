@@ -31,6 +31,7 @@ import {
   recordObservedToolArtifact,
   status,
 } from './change-loop.js'
+import { captureWorkspaceReality } from './workspace-reality.js'
 import { DshExecutionAdapter, type DshAgentPort } from './adapter.js'
 import { OrvenService } from './service.js'
 
@@ -196,6 +197,64 @@ describe('DSH durable Change loop', () => {
       expect(after.gateState).toBe('satisfied')
       expect(after.coverage).toEqual({ requiredComplete: 2, requiredTotal: 2 })
       expect(after.criteria.every(item => item.complete)).toBe(true)
+    } finally {
+      await rm(workspace, { recursive: true, force: true })
+    }
+  })
+
+  it('treats recommended-only Criteria as non-blocking for Gate readiness', async () => {
+    const workspace = await mkdtemp(join(tmpdir(), 'orven-recommended-'))
+    try {
+      const ctx = context()
+      const caller = agent(workspace)
+      const root = rootWithWorkspaceStore()
+      await beginChange(ctx, root, caller, {
+        title: 'Recommended-only change',
+        criteria: [
+          { statement: 'Optional polish is desirable', severity: 'recommended' },
+        ],
+      })
+
+      const current = await status(ctx, root, caller)
+      expect(current.coverage).toEqual({ requiredComplete: 0, requiredTotal: 0 })
+      expect(current.gateState).toBe('satisfied')
+    } finally {
+      await rm(workspace, { recursive: true, force: true })
+    }
+  })
+
+  it('changes workspace reality when untracked file content changes', async () => {
+    const workspace = await mkdtemp(join(tmpdir(), 'orven-reality-'))
+    try {
+      const { execFile } = await import('node:child_process')
+      const { promisify } = await import('node:util')
+      const { writeFile } = await import('node:fs/promises')
+      const run = promisify(execFile)
+      await run('git', ['-C', workspace, 'init'])
+      await run('git', ['-C', workspace, 'config', 'user.email', 'orven@example.test'])
+      await run('git', ['-C', workspace, 'config', 'user.name', 'Orven Test'])
+      await writeFile(join(workspace, 'tracked.txt'), 'base\n')
+      await run('git', ['-C', workspace, 'add', 'tracked.txt'])
+      await run('git', ['-C', workspace, 'commit', '-m', 'base'])
+
+      await writeFile(join(workspace, 'untracked.txt'), 'one\n')
+      const actor: ActorRef = { kind: 'system', id: 'reality-test' }
+      const first = await captureWorkspaceReality(
+        workspace,
+        '2026-09-30T00:00:00.000Z',
+        actor,
+      )
+
+      await writeFile(join(workspace, 'untracked.txt'), 'two\n')
+      const second = await captureWorkspaceReality(
+        workspace,
+        '2026-09-30T00:00:01.000Z',
+        actor,
+      )
+
+      expect(first.provider).toBe('git-working-tree-v1')
+      expect(second.provider).toBe('git-working-tree-v1')
+      expect(second.artifact.id).not.toBe(first.artifact.id)
     } finally {
       await rm(workspace, { recursive: true, force: true })
     }

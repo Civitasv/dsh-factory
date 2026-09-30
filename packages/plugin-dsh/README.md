@@ -14,7 +14,15 @@ or:
 dsh plugin --profile headless add @orven/plugin-dsh
 ~~~
 
-The bundle mounts Orven into the DSH Cordis graph and publishes the Orven service `ctx.orven`.
+The bundle mounts Orven into the DSH Cordis graph, publishes `ctx.orven`, and registers four model-facing tools:
+
+- `orven_begin_change` — create a durable Change with acceptance Criteria;
+- `orven_status` — inspect current coverage and derived Gate state;
+- `orven_execute` — delegate Work through a fresh DSH worker and capture exact tool-result Artifacts;
+- `orven_record_evidence` — attach an explicit Artifact-backed Evidence claim to a Criterion.
+
+For a workspace-backed DSH Session, graph persistence defaults to `<cwd>/.orven/`.
+The plugin writes `.orven/.gitignore` so the runtime log stays local by default.
 
 Override persistence in the profile's later `cordis.patch.yml` layer:
 

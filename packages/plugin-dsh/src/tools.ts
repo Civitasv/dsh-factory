@@ -56,7 +56,8 @@ export function registerOrvenModelTools(
 
   ctx.on('tools/result', (exec, result) => {
     if (exec.name.startsWith('orven_')) return
-    const task = recordObservedToolArtifact(
+    let task: Promise<void>
+    task = recordObservedToolArtifact(
       ctx,
       service,
       captures,
