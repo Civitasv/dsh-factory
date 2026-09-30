@@ -739,6 +739,47 @@ export async function recordObservedToolArtifact(
   )
 }
 
+function collectWorkerOutcome(agent: Agent): {
+  readonly status: 'succeeded' | 'failed' | 'cancelled'
+  readonly artifacts: readonly []
+  readonly evidence: readonly []
+  readonly findings: readonly []
+  readonly decisions: readonly []
+  readonly diagnostics: string
+} {
+  // Existing DSH API: the worker has reached idle, so its terminal turn/end is
+  // stable for this lifecycle. This adapter reads the exact durable event
+  // rather than equating "idle" with success.
+  const terminal = [...agent.session.snapshotEvents()]
+    .reverse()
+    .find(event => event.type === 'turn/end')
+
+  if (terminal?.type !== 'turn/end') {
+    return {
+      status: 'failed',
+      artifacts: [],
+      evidence: [],
+      findings: [],
+      decisions: [],
+      diagnostics: 'DSH worker reached idle without a terminal turn/end event.',
+    }
+  }
+
+  const kind = terminal.data.reason.kind
+  return {
+    status: kind === 'completed'
+      ? 'succeeded'
+      : kind === 'aborted'
+        ? 'cancelled'
+        : 'failed',
+    artifacts: [],
+    evidence: [],
+    findings: [],
+    decisions: [],
+    diagnostics: `DSH worker terminal reason: ${kind}.`,
+  }
+}
+
 export interface ExecuteResult {
   readonly state: string
   readonly executionId: string
@@ -812,14 +853,7 @@ export async function executeChangeWork(
       prepared,
       parentAgent: active.agent,
       collector: {
-        collect: async () => ({
-          status: 'succeeded',
-          artifacts: [],
-          evidence: [],
-          findings: [],
-          decisions: [],
-          diagnostics: 'DSH worker reached idle; exact tool outcomes were captured separately.',
-        }),
+        collect: async worker => collectWorkerOutcome(worker),
       },
       ...(signal === undefined ? {} : { signal }),
     })
