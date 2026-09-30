@@ -14,7 +14,20 @@ or:
 dsh plugin --profile headless add @orven/plugin-dsh
 ~~~
 
-The bundle mounts Orven into the DSH Cordis graph and publishes the Orven service `ctx.orven`.
+The bundle mounts Orven into the DSH Cordis graph, publishes the Orven service `ctx.orven`, and registers the model-facing tools:
+
+~~~text
+orven_begin_change
+orven_status
+orven_execute
+~~~
+
+By default the Event Log is durable under the launched workspace:
+
+~~~text
+./.orven/graph.json
+./.orven/events.jsonl
+~~~
 
 Override persistence in the profile's later `cordis.patch.yml` layer:
 
