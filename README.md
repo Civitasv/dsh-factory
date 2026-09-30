@@ -26,6 +26,8 @@ DeepSeek Harness     another Harness
 
 DeepSeek Harness is the first supported Harness, not a dependency of Orven's neutral runtime.
 
+The high-level Harness-neutral command surface is exported from `@orven/core/application`; Harness adapters translate their Session/Tool runtime into that command boundary.
+
 ## DSH installation
 
 After publication:
@@ -34,7 +36,7 @@ After publication:
 dsh plugin --profile web add @orven/plugin-dsh
 ```
 
-The DSH Bundle mounts Orven and exposes the Orven service `ctx.orven`.
+The DSH Bundle mounts Orven, exposes the Orven service `ctx.orven`, and registers `orven_begin_change`, `orven_status`, and `orven_execute` as model-facing DSH tools. The installed Bundle persists its Event Log under `./.orven` in the launched workspace by default.
 
 ## Development
 
