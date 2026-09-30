@@ -18,6 +18,10 @@ All fine-grained implementation modules are private `@orven/internal-*` workspac
 - Real DSH Loader/AgentRegistry process smoke.
 - Two-artifact distribution verification and clean external consumer install.
 - Orven product/package branding.
+- Harness-neutral application facade for Change creation, status, Work derivation, and execution-result recording.
+- DSH model-facing `orven_begin_change`, `orven_status`, and `orven_execute` tools.
+- DSH Session active-Change binding and workspace-local `.orven` persistence by default.
+- Trusted DSH runtime observation collector producing Run-scoped Artifact-backed Evidence.
 
 ## Architecture baseline
 
@@ -31,6 +35,6 @@ All fine-grained implementation modules are private `@orven/internal-*` workspac
 
 - npm `@orven` scope ownership/credentials are external setup.
 - Packages are not yet actually published.
-- Standard production Outcome Collector remains caller-provided.
+- Criterion-bound verification collectors beyond raw DSH runtime observations remain to be implemented.
 - Graph UI is not yet mounted into DSH Web.
 - No second Harness adapter exists yet.
