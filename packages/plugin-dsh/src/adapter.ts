@@ -26,6 +26,8 @@ export interface DshExecutionInput {
   readonly collector: DshOutcomeCollector
   readonly currentGraphRevision: () => GraphRevision | Promise<GraphRevision>
   readonly clock: () => string
+  readonly cwd?: string
+  readonly parentAgent?: Agent
   readonly signal?: AbortSignal
 }
 
@@ -51,6 +53,15 @@ export class DshExecutionAdapter {
     const startedAt = input.clock()
     const handle = await this.agents.create({
       sessionId: dshSessionId(input.prepared.executionId),
+      ...(input.parentAgent === undefined
+        ? {}
+        : {
+            parentAgent: input.parentAgent,
+            agentOptions: input.parentAgent.options,
+          }),
+      ...(input.cwd === undefined
+        ? {}
+        : { meta: { cwd: input.cwd } }),
       ...(input.signal === undefined ? {} : { signal: input.signal }),
     })
 

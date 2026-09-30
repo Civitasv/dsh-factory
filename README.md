@@ -34,7 +34,16 @@ After publication:
 dsh plugin --profile web add @orven/plugin-dsh
 ```
 
-The DSH Bundle mounts Orven and exposes the Orven service `ctx.orven`.
+The DSH Bundle mounts Orven, exposes `ctx.orven`, and registers the model-facing Change loop:
+
+```text
+orven_begin_change
+orven_status
+orven_execute
+orven_record_evidence
+```
+
+Workspace-backed sessions persist their Change Graph under `<cwd>/.orven/` by default.
 
 ## Development
 

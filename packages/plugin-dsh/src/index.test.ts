@@ -19,7 +19,7 @@ import {
 describe('Orven plugin', () => {
   it('declares the namespace-plugin contract', () => {
     expect(name).toBe('orven')
-    expect(inject).toEqual(['agents'])
+    expect(inject).toEqual(['agents', 'tools', 'sessionProjections'])
     expect(Config).toBeDefined()
   })
 
@@ -32,6 +32,14 @@ describe('Orven plugin', () => {
           throw new Error('unused')
         },
       },
+      tools: {
+        register: () => () => {},
+      },
+      sessionProjections: {
+        register: () => () => {},
+      },
+      on: () => () => {},
+      logger: { warn: () => {} },
       provide: (nextKey: string, value: unknown) => {
         key = nextKey
         provided = value
@@ -55,6 +63,14 @@ describe('Orven plugin', () => {
             throw new Error('unused')
           },
         },
+        tools: {
+          register: () => () => {},
+        },
+        sessionProjections: {
+          register: () => () => {},
+        },
+        on: () => () => {},
+        logger: { warn: () => {} },
         provide: (_key: string, value: unknown) => {
           service = value as OrvenService
           return () => {}
