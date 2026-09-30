@@ -1,6 +1,6 @@
 import type { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
-import type { ChangeKind, JsonValue } from '@orven/core'
+import type { ChangeKind } from '@orven/core'
 import type { OrvenService } from './service.js'
 import {
   beginChange,
@@ -11,7 +11,15 @@ import {
   status,
 } from './change-loop.js'
 
-function outputRecord(value: unknown): Record<string, JsonValue> {
+type DshJsonValue =
+  | null
+  | boolean
+  | number
+  | string
+  | DshJsonValue[]
+  | { [key: string]: DshJsonValue }
+
+function outputRecord(value: unknown): Record<string, DshJsonValue> {
   const serialized = JSON.stringify(value)
   if (serialized === undefined) {
     throw new Error('Orven tool result is not JSON-serializable')
@@ -20,7 +28,7 @@ function outputRecord(value: unknown): Record<string, JsonValue> {
   if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
     throw new Error('Orven tool result must be an object')
   }
-  return parsed as Record<string, JsonValue>
+  return parsed as Record<string, DshJsonValue>
 }
 
 const genericOutput = {
@@ -28,7 +36,7 @@ const genericOutput = {
     type: 'object',
     additionalProperties: true,
   } as const,
-  render: (_args: unknown, value: JsonValue) => [{
+  render: (_args: unknown, value: DshJsonValue) => [{
     type: 'text' as const,
     text: JSON.stringify(value, null, 2),
   }],
