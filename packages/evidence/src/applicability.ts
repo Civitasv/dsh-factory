@@ -1,4 +1,4 @@
-import type { ArtifactRef, Evidence, EvidenceReality } from '@dsh-factory/core'
+import type { ArtifactRef, Evidence, EvidenceReality } from '@orven/internal-domain'
 
 export type EvidenceApplicability =
   | 'applicable'

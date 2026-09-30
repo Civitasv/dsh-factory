@@ -6,7 +6,7 @@ import type {
   EvidenceReality,
   EvidenceRef,
   EvidenceRequirement,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import { evaluateEvidenceApplicability } from './applicability.js'
 import { assertCriterionEvidenceRequirements, assertEvidenceRequirement } from './validation.js'
 

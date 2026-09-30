@@ -4,7 +4,7 @@ import type {
   Evidence,
   EvidenceRequirement,
   JsonValue,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import type { EvidenceRegistry } from './registry.js'
 
 function assertUniqueArtifactRefs(label: string, refs: readonly ArtifactRef[]): void {
