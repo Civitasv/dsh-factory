@@ -5,6 +5,6 @@
   name: './fake-agent-factory.ts'
 
 - id: factory
-  name: '../../src/index.ts'
+  name: '../../dist/index.js'
   config:
     graphId: loader-smoke
