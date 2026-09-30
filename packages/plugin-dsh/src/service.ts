@@ -5,10 +5,18 @@ import type {
   GraphRevision,
 } from '@orven/core'
 import {
-  projectChangeGraph,
   type AppendRequest,
   type EventEnvelope,
 } from '@orven/core/events'
+import {
+  OrvenApplication,
+  type BeginChangeInput,
+  type BeginChangeResult,
+  type ChangeStatus,
+  type DeriveChangeWorkInput,
+  type RecordExecutionInput,
+  type RecordExecutionResult,
+} from '@orven/core/application'
 import {
   prepareExecution,
   type ExecutionResult,
@@ -44,11 +52,15 @@ export interface OrvenExecuteWorkInput extends OrvenPrepareWorkInput {
 }
 
 export class OrvenService {
+  readonly #application: OrvenApplication
+
   constructor(
     private readonly store: OrvenEventStore,
     private readonly executor: DshExecutionAdapter,
     private readonly clock: () => string = () => new Date().toISOString(),
-  ) {}
+  ) {
+    this.#application = new OrvenApplication(store, { clock })
+  }
 
   get graphId(): GraphId {
     return this.store.graphId
@@ -63,7 +75,25 @@ export class OrvenService {
   }
 
   snapshot(): ChangeGraphSnapshot {
-    return projectChangeGraph(this.store.graphId, this.store.readAll())
+    return this.#application.snapshot()
+  }
+
+  async beginChange(input: BeginChangeInput): Promise<BeginChangeResult> {
+    return await this.#application.beginChange(input)
+  }
+
+  status(changeId: ChangeId): ChangeStatus {
+    return this.#application.status(changeId)
+  }
+
+  deriveWork(input: DeriveChangeWorkInput): WorkItem {
+    return this.#application.deriveWork(input)
+  }
+
+  async recordExecution(
+    input: RecordExecutionInput,
+  ): Promise<RecordExecutionResult> {
+    return await this.#application.recordExecution(input)
   }
 
   async append(request: AppendRequest): Promise<readonly EventEnvelope[]> {
