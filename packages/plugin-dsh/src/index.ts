@@ -44,7 +44,10 @@ async function createEventStore(
 
 export async function apply(
   ctx: Context,
-  config: OrvenPluginConfig = { graphId: 'orven' },
+  config: OrvenPluginConfig = {
+    graphId: 'orven',
+    persistenceDirectory: '.orven',
+  },
 ): Promise<void> {
   const store = await createEventStore(config)
   const service = new OrvenService(
