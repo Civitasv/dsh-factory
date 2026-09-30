@@ -2,21 +2,20 @@
 
 ## Release surface
 
-Features 01-12 are implemented through release preparation and deployment observation.
+Features 01-13 are implemented through production feedback ingestion.
 
 ## Implemented
 
-- Change Graph through CI/test Evidence integration.
-- Release candidates require a satisfied final Release Gate at the same Graph Revision.
-- Content-addressed Release Plan and `release/candidate` Artifact.
-- Provider-neutral Deployment Port.
-- Immutable deployment receipt Artifact.
-- Reality-bound `factory/deployment-observation@1` Evidence.
-- Deployment success/failure/cancellation maps to supports/contradicts/inconclusive.
-- Successful deployment does not silently close Change.
+- Change Graph through release/deployment.
+- Immutable content-addressed production observations bound to exact deployment/Reality.
+- `factory/runtime-observation@1` Evidence for production signals.
+- Deterministic numeric Health Rules.
+- Violations produce contradictory Evidence plus graph-ready `production_regression` Findings and `raises` relations.
+- Healthy observations produce supporting Evidence without synthetic Findings.
+- Production observations do not mutate Change status/scope.
 
 ## Active limitations
 
-- Concrete deployment provider clients are host integrations.
-- Production health observation is next.
-- No end-user Graph UI.
+- Telemetry providers still need host-specific polling/subscription implementations.
+- No anomaly/ML detection or automatic rollback.
+- Graph-first end-user UI is next.

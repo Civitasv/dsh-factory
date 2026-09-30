@@ -12,6 +12,7 @@
     { "path": "./packages/integration-github" },
     { "path": "./packages/integration-ci" },
     { "path": "./packages/release" },
+    { "path": "./packages/observation" },
     { "path": "./packages/runtime-dsh" }
   ]
 }
