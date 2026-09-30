@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PROFILE="${ORVEN_DSH_PROFILE:-orven-test}"
+PROFILE="${ORVEN_DSH_PROFILE:-orven}"
+TEMPLATE="${ORVEN_DSH_TEMPLATE:-web}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PACK_ROOT="${ORVEN_PACK_ROOT:-${XDG_CACHE_HOME:-$HOME/.cache}/orven-dsh-local}"
 PACK_DIR="$PACK_ROOT/packages"
 DSH_HOME_DIR="${DSH_HOME:-$HOME/.dsh}"
 PROFILE_DIR="$DSH_HOME_DIR/profiles/$PROFILE"
 WORKSPACE_FILE="$PROFILE_DIR/pnpm-workspace.yaml"
+PROFILE_MARKER="$PROFILE_DIR/.orven-local-profile"
 
 BEGIN_MARKER="# >>> orven-local core override"
 END_MARKER="# <<< orven-local core override"
@@ -24,27 +26,64 @@ need() {
 usage() {
   cat <<EOF
 Usage:
-  ./scripts/orven-local.sh install        Build the current checkout and install it into DSH
-  ./scripts/orven-local.sh update         Rebuild/reinstall the current checkout
-  ./scripts/orven-local.sh dump           Show the composed DSH config
-  ./scripts/orven-local.sh run [prompt]   Run DSH with the Orven test profile
-  ./scripts/orven-local.sh uninstall      Remove Orven packages from the test profile
-  ./scripts/orven-local.sh paths          Print local paths
+  ./scripts/orven-local.sh install          Build the current checkout and install it into DSH
+  ./scripts/orven-local.sh update           Rebuild/reinstall the current checkout
+  ./scripts/orven-local.sh dump             Show the composed DSH config
+  ./scripts/orven-local.sh run [app args]   Run the dedicated Orven DSH profile
+  ./scripts/orven-local.sh uninstall        Remove Orven packages but keep the profile
+  ./scripts/orven-local.sh reset            Delete the script-managed Orven profile
+  ./scripts/orven-local.sh paths            Print local paths
 
 Environment:
-  ORVEN_DSH_PROFILE   DSH profile name     (default: orven-test)
-  ORVEN_PACK_ROOT     Packed artifact root (default: ~/.cache/orven-dsh-local)
-  ORVEN_FULL_CHECK=1  Run full checks/distribution verification before install
-  DSH_HOME            DSH home             (default: ~/.dsh)
+  ORVEN_DSH_PROFILE    DSH profile name     (default: orven)
+  ORVEN_DSH_TEMPLATE   Initial DSH template (default: web)
+  ORVEN_PACK_ROOT      Packed artifact root (default: ~/.cache/orven-dsh-local)
+  ORVEN_FULL_CHECK=1   Run full checks/distribution verification before install
+  DSH_HOME             DSH home             (default: ~/.dsh)
 
-The script never fetches, resets, or switches Git branches. It always tests the
-working tree that contains this script.
+On first install the script creates the dedicated profile from the selected DSH
+template. Later installs reuse that profile. The script never fetches, resets, or
+switches Git branches; it always tests the working tree that contains this script.
 
 Typical:
   ./scripts/orven-local.sh install
   ./scripts/orven-local.sh dump
-  ./scripts/orven-local.sh run "hello"
+  ./scripts/orven-local.sh run
+  ./scripts/orven-local.sh run --no-open
 EOF
+}
+
+ensure_profile() {
+  if [[ -d "$PROFILE_DIR" ]]; then
+    echo "==> Using existing DSH profile: $PROFILE"
+    return 0
+  fi
+
+  echo "==> Initializing DSH profile '$PROFILE' from '$TEMPLATE'"
+  dsh --profile "$PROFILE" --from-default-profile "$TEMPLATE" --dump-config >/dev/null
+
+  mkdir -p "$PROFILE_DIR"
+  {
+    printf 'created-by=orven-local\n'
+    printf 'template=%s\n' "$TEMPLATE"
+  } > "$PROFILE_MARKER"
+}
+
+require_profile() {
+  [[ -d "$PROFILE_DIR" ]] || die "DSH profile '$PROFILE' does not exist. Run ./scripts/orven-local.sh install first."
+}
+
+reset_profile() {
+  if [[ ! -d "$PROFILE_DIR" ]]; then
+    echo "==> DSH profile '$PROFILE' is already absent"
+    return 0
+  fi
+
+  [[ -f "$PROFILE_MARKER" ]] || die "refusing to delete non-managed DSH profile '$PROFILE'. Only profiles created by this script can be reset."
+
+  echo "==> Removing script-managed DSH profile: $PROFILE"
+  rm -rf "$PROFILE_DIR"
+  echo "==> Done. Run ./scripts/orven-local.sh install to recreate it from '$TEMPLATE'."
 }
 
 build_and_pack() {
@@ -100,7 +139,7 @@ write_core_override() {
 
   if grep -Eq '^[[:space:]]*overrides:[[:space:]]*$' "$WORKSPACE_FILE"; then
     die "$WORKSPACE_FILE already has an overrides: section not managed by this script.
-Use the dedicated profile (default: orven-test), or add:
+Use the dedicated profile (default: orven), or add:
   '@orven/core': 'file:$CORE_TGZ'
 to the existing overrides section manually."
   fi
@@ -116,12 +155,13 @@ EOF
 
 install_local() {
   build_and_pack
-
-  echo "==> Initializing DSH profile and installing @orven/core"
-  dsh plugin --profile "$PROFILE" add "$CORE_TGZ"
+  ensure_profile
 
   echo "==> Pinning plugin dependency to the local packed @orven/core"
   write_core_override
+
+  echo "==> Installing @orven/core"
+  dsh plugin --profile "$PROFILE" add "$CORE_TGZ"
 
   echo "==> Installing @orven/plugin-dsh"
   dsh plugin --profile "$PROFILE" add "$PLUGIN_TGZ"
@@ -135,14 +175,16 @@ install_local() {
   echo
   echo "Next:"
   echo "  ./scripts/orven-local.sh dump"
-  echo "  ./scripts/orven-local.sh run \"hello\""
+  echo "  ./scripts/orven-local.sh run"
 }
 
 dump_config() {
+  require_profile
   dsh --profile "$PROFILE" --dump-config
 }
 
 run_dsh() {
+  require_profile
   if [[ "$#" -eq 0 ]]; then
     exec dsh --profile "$PROFILE"
   else
@@ -151,6 +193,11 @@ run_dsh() {
 }
 
 uninstall_local() {
+  if [[ ! -d "$PROFILE_DIR" ]]; then
+    echo "==> DSH profile '$PROFILE' is absent; nothing to uninstall"
+    return 0
+  fi
+
   echo "==> Removing Orven from DSH profile: $PROFILE"
   dsh plugin --profile "$PROFILE" remove @orven/plugin-dsh @orven/core || true
   remove_managed_override
@@ -163,7 +210,9 @@ repo:       $ROOT_DIR
 packages:   $PACK_DIR
 dsh home:   $DSH_HOME_DIR
 profile:    $PROFILE_DIR
+template:   $TEMPLATE
 workspace:  $WORKSPACE_FILE
+marker:     $PROFILE_MARKER
 EOF
 }
 
@@ -184,6 +233,9 @@ main() {
       ;;
     uninstall)
       uninstall_local
+      ;;
+    reset)
+      reset_profile
       ;;
     paths)
       print_paths
