@@ -22,7 +22,7 @@ export default defineConfig({
   platform: 'browser',
   target: 'es2023',
   fixedExtension: false,
-  sourcemap: true,
+  sourcemap: false,
   dts: false,
   clean: false,
   deps: {
@@ -35,6 +35,5 @@ export default defineConfig({
       'window.__ModuleLoader__.load({ id: "@orven/plugin-dsh", factory: (require) => {',
     intro: 'var module = { exports: {} }; var exports = module.exports;',
     footer: 'return module.exports; } });',
-    sourcemapExcludeSources: false,
   },
 })

@@ -29,7 +29,6 @@
     "!dist/*.spec.*",
     "!dist/**/*.spec.*",
     "client.js",
-    "client.js.map",
     "cordis.patch.yml",
     "README.md"
   ],

@@ -170,6 +170,27 @@ try {
       if (!files.includes('package/cordis.patch.yml')) {
         fail('@orven/plugin-dsh is missing cordis.patch.yml')
       }
+      if (!files.includes('package/client.js')) {
+        fail('@orven/plugin-dsh is missing its browser client artifact')
+      }
+      if (packedManifest.exports?.['./client']?.default !== './client.js') {
+        fail('@orven/plugin-dsh must export ./client from ./client.js')
+      }
+      if (packedManifest.dsh?.client?.platform !== 'web') {
+        fail('@orven/plugin-dsh must declare a web dsh.client surface')
+      }
+      const clientBody = (await run('tar', [
+        '-xOzf', tarball, 'package/client.js',
+      ])).stdout
+      if (!clientBody.includes('window.__ModuleLoader__.load')
+        || !clientBody.includes('@orven/plugin-dsh')) {
+        fail('@orven/plugin-dsh client artifact lacks the DSH module-loader registration')
+      }
+      if (clientBody.includes('@orven/internal-')
+        || clientBody.includes("require('@orven/core")
+        || clientBody.includes('require("@orven/core')) {
+        fail('@orven/plugin-dsh client artifact leaked a private or unbundled Orven dependency')
+      }
       if (packedText.includes('@orven/internal-')) {
         fail('@orven/plugin-dsh manifest leaked private Orven package')
       }
