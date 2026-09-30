@@ -192,14 +192,16 @@ try {
       '@orven/core': 'file:' + coreTarball,
       '@orven/plugin-dsh': 'file:' + dshTarball,
     },
-    pnpm: {
-      overrides: {
-        '@orven/core': 'file:' + coreTarball,
-      },
-    },
   }, null, 2) + '\n')
+  await writeFile(join(consumer, 'pnpm-workspace.yaml'), [
+    'packages:',
+    '  - .',
+    'overrides:',
+    "  '@orven/core': 'file:" + coreTarball + "'",
+    '',
+  ].join('\n'))
 
-  await run('pnpm', ['install', '--ignore-scripts', '--no-frozen-lockfile'], consumer)
+  await run('pnpm', ['install', '--ignore-scripts','--no-frozen-lockfile'], consumer)
   await run(process.execPath, [
     '--input-type=module',
     '-e',
