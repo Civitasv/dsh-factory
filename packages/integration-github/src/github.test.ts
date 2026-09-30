@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { ActorRef, ChangeId } from '@dsh-factory/core'
+import type { ActorRef, ChangeId } from '@orven/internal-domain'
 import {
   commitArtifact,
   issueArtifact,

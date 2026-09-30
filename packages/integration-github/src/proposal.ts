@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import type { RelationId } from '@dsh-factory/core'
+import type { RelationId } from '@orven/internal-domain'
 import { issueArtifact, normalizeIssue } from './artifacts.js'
 import type {
   GitHubIssueChangeProposal,

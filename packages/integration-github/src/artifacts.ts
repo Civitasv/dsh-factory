@@ -4,7 +4,7 @@ import type {
   Artifact,
   ArtifactId,
   JsonValue,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import type {
   GitHubCommitSnapshot,
   GitHubIssueSnapshot,

@@ -5,7 +5,7 @@ import type {
   ChangeId,
   ChangeKind,
   Relation,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 
 export interface GitHubRepositoryRef {
   readonly owner: string
