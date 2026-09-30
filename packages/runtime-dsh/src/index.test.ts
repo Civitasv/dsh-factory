@@ -1,14 +1,25 @@
 import { describe, expect, it } from 'vitest'
 import type { Context } from '@deepseek-ai/cordis'
-import { createRuntimeBinding, name } from './index.js'
+import { apply, DshExecutionAdapter, inject, name } from './index.js'
 
-describe('DSH runtime adapter', () => {
-  it('exposes a stable namespace-plugin name', () => {
+describe('DSH runtime plugin', () => {
+  it('declares stable plugin identity and the public agents dependency', () => {
     expect(name).toBe('dsh-factory')
+    expect(inject).toEqual(['agents'])
   })
 
-  it('keeps DSH ownership behind a runtime binding', () => {
-    const binding = createRuntimeBinding({} as Context)
-    expect(binding).toEqual({ runtime: 'dsh' })
+  it('publishes the Factory runtime service over the injected agents port', () => {
+    let provided: unknown
+    const ctx = {
+      agents: { create: async () => { throw new Error('unused') } },
+      provide: (key: string, value: unknown) => {
+        expect(key).toBe('dshFactoryRuntime')
+        provided = value
+      },
+    } as unknown as Context
+
+    apply(ctx)
+
+    expect(provided).toBeInstanceOf(DshExecutionAdapter)
   })
 })

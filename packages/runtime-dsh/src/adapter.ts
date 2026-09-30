@@ -51,7 +51,7 @@ export class DshExecutionAdapter {
     const startedAt = input.clock()
     const handle = await this.agents.create({
       sessionId: dshSessionId(input.prepared.executionId),
-      signal: input.signal,
+      ...(input.signal === undefined ? {} : { signal: input.signal }),
     })
 
     let aborted = input.signal?.aborted ?? false
