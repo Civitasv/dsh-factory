@@ -29,6 +29,36 @@ DSH Factory is an AI-native software-development runtime layered on DeepSeek Har
 - DSH/Cordis integration uses the ordinary namespace-plugin shape (`name`, optional `inject`, `apply`).
 - Runtime packages may depend inward on domain packages. Domain packages never depend outward on runtime packages.
 
+## Git conventions
+
+Commit messages use semantic Conventional Commits:
+
+```text
+<type>(<optional-scope>): <imperative semantic description>
+```
+
+Allowed baseline types:
+
+- `feat` — user- or system-visible capability;
+- `fix` — behavior defect correction;
+- `refactor` — structural change without intended behavior change;
+- `test` — test-only change;
+- `docs` — documentation-only change;
+- `ci` — GitHub Actions or CI policy;
+- `build` — build, package, or dependency wiring;
+- `chore` — repository maintenance that fits no more specific type.
+
+Examples:
+
+```text
+feat(core): add change graph relation types
+fix(events): reject duplicate change event sequences
+docs: adopt semantic feature spec naming
+ci: validate pull requests with GitHub Actions
+```
+
+Use the narrowest meaningful scope when it adds information. Do not use vague subjects such as `update files`, `misc changes`, `changes`, or version-only messages.
+
 ## Documentation ownership
 
 - `Docs/Architecture/` — current invariants, ownership, dependency direction, protocol boundaries.
@@ -47,4 +77,5 @@ For implementation changes, verify applicable items:
 - `pnpm test`;
 - architecture/spec docs updated for boundary changes;
 - no DSH/Cordis import leaked into `core` or `events`;
-- the diff contains only the intended change.
+- the diff contains only the intended change;
+- the commit message follows the semantic convention.
