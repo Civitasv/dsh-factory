@@ -42,6 +42,7 @@ describe('Orven plugin', () => {
         section: () => () => {},
       },
       on: () => () => {},
+      inject: () => () => {},
       logger: { warn: () => {} },
       provide: (nextKey: string, value: unknown) => {
         key = nextKey
@@ -76,6 +77,7 @@ describe('Orven plugin', () => {
           section: () => () => {},
         },
         on: () => () => {},
+        inject: () => () => {},
         logger: { warn: () => {} },
         provide: (_key: string, value: unknown) => {
           service = value as OrvenService
