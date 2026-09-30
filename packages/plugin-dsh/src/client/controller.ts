@@ -234,7 +234,21 @@ export class OrvenGraphController {
         return
       }
 
-      const payload: unknown = await response.json()
+      const body = await response.text()
+      let payload: unknown
+      try {
+        payload = JSON.parse(body)
+      } catch {
+        this.#publishFailure(
+          sessionId,
+          transportError(
+            response.ok
+              ? `Orven graph request returned invalid JSON with HTTP ${response.status}.`
+              : `Orven graph request failed with HTTP ${response.status}.`,
+          ),
+        )
+        return
+      }
       if (!response.ok) {
         const error = isOrvenGraphErrorDto(payload)
           ? payload
