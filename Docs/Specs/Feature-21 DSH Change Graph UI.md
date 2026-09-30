@@ -1,6 +1,6 @@
 # Feature-21 — DSH Change Graph UI
 
-Status: Proposed  
+Status: Implemented  
 Date: 2026-09-30
 
 ## 1. Problem
