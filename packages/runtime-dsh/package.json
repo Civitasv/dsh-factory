@@ -1,0 +1,25 @@
+{
+  "name": "@dsh-factory/runtime-dsh",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@dsh-factory/core": "workspace:*",
+    "@dsh-factory/events": "workspace:*"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.4"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.0.4"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}
