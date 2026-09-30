@@ -62,7 +62,11 @@
       "types": "./src/graph-ui.ts",
       "default": "./src/graph-ui.ts"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./application": {
+      "types": "./src/application.ts",
+      "default": "./src/application.ts"
+    }
   },
   "files": [
     "dist",
@@ -135,7 +139,11 @@
         "types": "./dist/graph-ui.d.ts",
         "default": "./dist/graph-ui.js"
       },
-      "./package.json": "./package.json"
+      "./package.json": "./package.json",
+      "./application": {
+        "types": "./dist/application.d.ts",
+        "default": "./dist/application.js"
+      }
     }
   },
   "engines": {
@@ -154,7 +162,8 @@
     "@orven/internal-integration-ci": "workspace:*",
     "@orven/internal-release": "workspace:*",
     "@orven/internal-observation": "workspace:*",
-    "@orven/internal-graph-ui": "workspace:*"
+    "@orven/internal-graph-ui": "workspace:*",
+    "@orven/internal-application": "workspace:*"
   },
   "scripts": {
     "build": "tsc -b",
