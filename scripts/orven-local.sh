@@ -157,11 +157,11 @@ install_local() {
   build_and_pack
   ensure_profile
 
-  echo "==> Initializing DSH profile and installing @orven/core"
-  dsh plugin --profile "$PROFILE" add "$CORE_TGZ"
-
   echo "==> Pinning plugin dependency to the local packed @orven/core"
   write_core_override
+
+  echo "==> Installing @orven/core"
+  dsh plugin --profile "$PROFILE" add "$CORE_TGZ"
 
   echo "==> Installing @orven/plugin-dsh"
   dsh plugin --profile "$PROFILE" add "$PLUGIN_TGZ"

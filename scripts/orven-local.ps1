@@ -231,11 +231,11 @@ function Install-Local {
     $Packages = Build-And-Pack
     Ensure-Profile
 
-    Write-Host "==> Initializing DSH profile and installing @orven/core"
-    Invoke-Native dsh plugin --profile $ProfileName add $Packages.Core
-
     Write-Host "==> Pinning plugin dependency to local packed @orven/core"
     Write-CoreOverride $Packages.Core
+
+    Write-Host "==> Installing @orven/core"
+    Invoke-Native dsh plugin --profile $ProfileName add $Packages.Core
 
     Write-Host "==> Installing @orven/plugin-dsh"
     Invoke-Native dsh plugin --profile $ProfileName add $Packages.Plugin
