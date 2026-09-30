@@ -52,7 +52,7 @@ describe('Factory real DSH Loader composition', () => {
 
     expect(report).toEqual({
       service: true,
-      graphId: 'loader-smoke',
+      graphId: 'orven-loader-smoke',
       revision: 1,
       nodes: 1,
       executionState: 'succeeded',

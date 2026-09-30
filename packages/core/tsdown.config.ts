@@ -23,6 +23,7 @@ export default defineConfig({
   target: 'es2023',
   sourcemap: true,
   dts: true,
+  fixedExtension: false,
   clean: true,
-  noExternal: [/^@orven\/internal-/],
+  deps: { alwaysBundle: [/^@orven\/internal-/] },
 })
