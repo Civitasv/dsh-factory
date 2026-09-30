@@ -54,7 +54,7 @@ function Invoke-Native {
         [string[]]$Arguments
     )
 
-    & $FilePath @Arguments
+    & $FilePath @Arguments | Out-Host
 
     if ($LASTEXITCODE -ne 0) {
         Fail "$FilePath exited with code $LASTEXITCODE"
@@ -217,7 +217,7 @@ function Run-Dsh {
 
 function Uninstall-Local {
     Write-Host "==> Removing Orven from DSH profile: $ProfileName"
-    & dsh plugin --profile $ProfileName remove @orven/plugin-dsh @orven/core
+    & dsh plugin --profile $ProfileName remove '@orven/plugin-dsh' '@orven/core'
 
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "DSH package removal returned exit code $LASTEXITCODE; continuing cleanup."
