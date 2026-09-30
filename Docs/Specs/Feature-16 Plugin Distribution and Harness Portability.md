@@ -1,5 +1,8 @@
 # Feature-16 Plugin Distribution and Harness Portability
 
+> **Superseded by Feature-17.** Feature-16 introduced fourteen public Factory packages. Feature-17 preserves the same internal modularity but contracts the public surface to `@orven/core` plus Harness adapters such as `@orven/plugin-dsh`.
+
+
 ## Objective
 
 Make DSH Factory publishable and installable through the ordinary DeepSeek Harness plugin workflow without collapsing the architecture into a DSH-specific monolith.
