@@ -11,6 +11,18 @@ import {
   status,
 } from './change-loop.js'
 
+function outputRecord(value: unknown): Record<string, JsonValue> {
+  const serialized = JSON.stringify(value)
+  if (serialized === undefined) {
+    throw new Error('Orven tool result is not JSON-serializable')
+  }
+  const parsed = JSON.parse(serialized) as unknown
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error('Orven tool result must be an object')
+  }
+  return parsed as Record<string, JsonValue>
+}
+
 const genericOutput = {
   schema: {
     type: 'object',
@@ -88,7 +100,7 @@ export function registerOrvenModelTools(
     },
     output: genericOutput,
     async execute(args, exec) {
-      return await beginChange(ctx, service, exec.agent, {
+      return outputRecord(await beginChange(ctx, service, exec.agent, {
         title: args.title,
         ...(args.kind === undefined
           ? {}
@@ -99,7 +111,7 @@ export function registerOrvenModelTools(
             ? {}
             : { severity: item.severity }),
         })),
-      })
+      }))
     },
   }))
 
@@ -110,7 +122,7 @@ export function registerOrvenModelTools(
     parameters: {},
     output: genericOutput,
     async execute(_args, exec) {
-      return await status(ctx, service, exec.agent)
+      return outputRecord(await status(ctx, service, exec.agent))
     },
     isConcurrencySafe: () => true,
   }))
@@ -145,12 +157,12 @@ export function registerOrvenModelTools(
     },
     output: genericOutput,
     async execute(args, exec) {
-      return await recordEvidence(ctx, service, exec.agent, {
+      return outputRecord(await recordEvidence(ctx, service, exec.agent, {
         criterionId: args.criterionId,
         artifactIds: args.artifactIds,
         claim: args.claim,
         result: args.result,
-      })
+      }))
     },
   }))
 
@@ -167,14 +179,14 @@ export function registerOrvenModelTools(
     },
     output: genericOutput,
     async execute(args, exec) {
-      return await executeChangeWork(
+      return outputRecord(await executeChangeWork(
         ctx,
         service,
         captures,
         exec.agent,
         args.objective,
         exec.signal,
-      )
+      ))
     },
   }))
 }
