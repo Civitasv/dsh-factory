@@ -15,6 +15,7 @@ import type {
 import { evaluateCriterionEvidenceCoverage } from '@orven/core/evidence'
 import {
   ORVEN_GRAPH_ERROR_SCHEMA,
+  ORVEN_GRAPH_PATH,
   ORVEN_GRAPH_SCHEMA,
   type OrvenGraphDto,
   type OrvenGraphErrorDto,
@@ -295,7 +296,7 @@ export function registerOrvenGraphRoute(
   root: OrvenService,
 ): void {
   const route: ConnectionFetchRoute = {
-    path: '/api/orven/graph',
+    path: ORVEN_GRAPH_PATH,
     methods: ['GET', 'HEAD'],
     requestBody: 'buffered',
     fetch: request => graphResponse(ctx, root, request),
