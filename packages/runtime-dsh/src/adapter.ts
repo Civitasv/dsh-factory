@@ -59,6 +59,7 @@ export class DshExecutionAdapter {
       aborted = true
       handle.agent.cancel({ kind: 'parent' })
     }
+    if (aborted) handle.agent.cancel({ kind: 'parent' })
     input.signal?.addEventListener('abort', onAbort, { once: true })
 
     try {
