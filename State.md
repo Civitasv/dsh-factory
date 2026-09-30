@@ -23,6 +23,8 @@ All fine-grained implementation modules are private `@orven/internal-*` workspac
 - Model-facing `orven_begin_change`, `orven_status`, `orven_execute`, and `orven_record_evidence`.
 - Exact DSH tool-result Artifact capture and Artifact-backed Evidence attachment.
 - Workspace-reality fingerprinting and derived Criterion coverage/Gate readiness.
+- Guided DSH orchestration policy integrated through `ctx.systemPrompt`, with a manual opt-out.
+- Recursive Orven orchestration blocked inside delegated Orven workers.
 
 ## Architecture baseline
 
@@ -37,5 +39,5 @@ All fine-grained implementation modules are private `@orven/internal-*` workspac
 - npm `@orven` scope ownership/credentials are external setup.
 - Packages are not yet actually published.
 - Low-level `ctx.orven.executeWork()` still accepts a caller-provided Outcome Collector; the model-facing DSH loop has a concrete terminal-turn collector.
-- Graph UI is not yet mounted into DSH Web.
+- Graph UI is not yet mounted into DSH Web; this is the next product-facing integration step.
 - No second Harness adapter exists yet.

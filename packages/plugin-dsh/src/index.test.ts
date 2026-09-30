@@ -19,7 +19,7 @@ import {
 describe('Orven plugin', () => {
   it('declares the namespace-plugin contract', () => {
     expect(name).toBe('orven')
-    expect(inject).toEqual(['agents', 'tools', 'sessionProjections'])
+    expect(inject).toEqual(['agents', 'tools', 'sessionProjections', 'systemPrompt'])
     expect(Config).toBeDefined()
   })
 
@@ -37,6 +37,9 @@ describe('Orven plugin', () => {
       },
       sessionProjections: {
         register: () => () => {},
+      },
+      systemPrompt: {
+        section: () => () => {},
       },
       on: () => () => {},
       logger: { warn: () => {} },

@@ -3,12 +3,14 @@ import { join, resolve } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-agent'
 import type {} from '@deepseek-ai/dsh-session-projection'
+import type {} from '@deepseek-ai/dsh-system-prompt'
 import type {} from '@deepseek-ai/dsh-tools'
 import type { GraphId } from '@orven/core'
 import { InMemoryEventStore } from '@orven/core/events'
 import { JsonlEventStore } from '@orven/core/persistence'
 import { DshExecutionAdapter } from './adapter.js'
 import { Config, type Config as OrvenPluginConfig } from './config.js'
+import { registerOrvenOrchestrationGuidance } from './orchestration.js'
 import { registerOrvenSessionProjection } from './session-binding.js'
 import { OrvenService } from './service.js'
 import type { OrvenEventStore } from './store.js'
@@ -18,13 +20,14 @@ export * from './adapter.js'
 export * from './change-loop.js'
 export * from './config.js'
 export * from './messages.js'
+export * from './orchestration.js'
 export * from './service.js'
 export * from './session-binding.js'
 export * from './store.js'
 export * from './workspace-reality.js'
 
 export const name = 'orven'
-export const inject = ['agents', 'tools', 'sessionProjections']
+export const inject = ['agents', 'tools', 'sessionProjections', 'systemPrompt']
 
 declare module '@deepseek-ai/cordis' {
   interface Context {
@@ -97,6 +100,10 @@ export async function apply(
 
   registerOrvenSessionProjection(ctx)
   registerOrvenModelTools(ctx, service)
+  registerOrvenOrchestrationGuidance(
+    ctx,
+    config.orchestration ?? 'guided',
+  )
   ctx.provide('orven', service)
 }
 

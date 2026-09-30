@@ -1,5 +1,6 @@
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-session-projection'
+import type {} from '@deepseek-ai/dsh-system-prompt'
 import type {} from '@deepseek-ai/dsh-tools'
 
 export const name = 'orven-loader-test-seams'
@@ -13,4 +14,8 @@ export function apply(ctx: Context): void {
     register: () => () => {},
     stateOf: () => undefined,
   } as unknown as Context['sessionProjections'])
+
+  ctx.provide('systemPrompt', {
+    section: () => () => {},
+  } as unknown as Context['systemPrompt'])
 }

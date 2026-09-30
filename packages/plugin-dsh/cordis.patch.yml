@@ -4,3 +4,4 @@
       name: '@orven/plugin-dsh'
       config:
         graphId: orven
+        orchestration: guided
