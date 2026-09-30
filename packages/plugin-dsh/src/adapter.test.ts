@@ -5,13 +5,13 @@ import {
   type ActorRef,
   type ChangeGraphSnapshot,
   type ChangeId,
-} from '@dsh-factory/core'
-import { prepareExecution } from '@dsh-factory/execution'
+} from '@orven/core'
+import { prepareExecution } from '@orven/core/execution'
 import {
   materializeWork,
   type CapabilityId,
   type WorkerDescriptor,
-} from '@dsh-factory/work'
+} from '@orven/core/work'
 import {
   DshExecutionAdapter,
   dshSessionId,
@@ -116,7 +116,7 @@ function fakePort(log: string[]): {
 describe('DshExecutionAdapter', () => {
   it('uses deterministic DSH Session identity', () => {
     expect(String(dshSessionId('exec:work:abc:1'))).toBe(
-      'dsh-factory:exec:work:abc:1',
+      'orven:exec:work:abc:1',
     )
   })
 
@@ -152,7 +152,7 @@ describe('DshExecutionAdapter', () => {
       'collect',
       'dispose',
     ])
-    expect(String(fake.getOptions()?.sessionId)).toContain('dsh-factory:')
+    expect(String(fake.getOptions()?.sessionId)).toContain('orven:')
   })
 
   it('preserves Feature-07 stale completion semantics', async () => {

@@ -4,15 +4,16 @@
     "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/.tsbuildinfo",
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
   "references": [
-    { "path": "../core" },
-    { "path": "../context" },
-    { "path": "../events" },
-    { "path": "../execution" },
-    { "path": "../persistence" },
-    { "path": "../work" }
+    {
+      "path": "../core"
+    }
   ],
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts"
+  ]
 }

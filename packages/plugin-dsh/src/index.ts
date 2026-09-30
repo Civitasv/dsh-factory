@@ -1,13 +1,13 @@
 import { resolve } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-agent'
-import type { GraphId } from '@dsh-factory/core'
-import { InMemoryEventStore } from '@dsh-factory/events'
-import { JsonlEventStore } from '@dsh-factory/persistence'
+import type { GraphId } from '@orven/core'
+import { InMemoryEventStore } from '@orven/core/events'
+import { JsonlEventStore } from '@orven/core/persistence'
 import { DshExecutionAdapter } from './adapter.js'
-import { Config, type Config as FactoryPluginConfig } from './config.js'
-import { FactoryService } from './service.js'
-import type { FactoryEventStore } from './store.js'
+import { Config, type Config as OrvenPluginConfig } from './config.js'
+import { OrvenService } from './service.js'
+import type { OrvenEventStore } from './store.js'
 
 export * from './adapter.js'
 export * from './config.js'
@@ -15,18 +15,18 @@ export * from './messages.js'
 export * from './service.js'
 export * from './store.js'
 
-export const name = 'dsh-factory'
+export const name = 'orven'
 export const inject = ['agents']
 
 declare module '@deepseek-ai/cordis' {
   interface Context {
-    factory: FactoryService
+    factory: OrvenService
   }
 }
 
 async function createEventStore(
-  config: FactoryPluginConfig,
-): Promise<FactoryEventStore> {
+  config: OrvenPluginConfig,
+): Promise<OrvenEventStore> {
   if (config.graphId.trim() === '') {
     throw new Error('Factory graphId must be non-empty')
   }
@@ -44,10 +44,10 @@ async function createEventStore(
 
 export async function apply(
   ctx: Context,
-  config: FactoryPluginConfig = { graphId: 'factory' },
+  config: OrvenPluginConfig = { graphId: 'factory' },
 ): Promise<void> {
   const store = await createEventStore(config)
-  const service = new FactoryService(
+  const service = new OrvenService(
     store,
     new DshExecutionAdapter(ctx.agents),
   )

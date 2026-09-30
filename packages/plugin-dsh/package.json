@@ -1,6 +1,6 @@
 {
-  "name": "@dsh-factory/plugin-dsh",
-  "description": "DeepSeek Harness bundle and Cordis adapter for DSH Factory.",
+  "name": "@orven/plugin-dsh",
+  "description": "DeepSeek Harness bundle and Cordis adapter for Orven.",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -13,10 +13,15 @@
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json"
   },
+  "files": [
+    "dist",
+    "cordis.patch.yml",
+    "README.md"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Civitasv/dsh-factory.git",
+    "url": "git+https://github.com/Civitasv/Orven.git",
     "directory": "packages/plugin-dsh"
   },
   "publishConfig": {
@@ -31,12 +36,7 @@
     }
   },
   "dependencies": {
-    "@dsh-factory/context": "workspace:^",
-    "@dsh-factory/core": "workspace:^",
-    "@dsh-factory/events": "workspace:^",
-    "@dsh-factory/execution": "workspace:^",
-    "@dsh-factory/persistence": "workspace:^",
-    "@dsh-factory/work": "workspace:^"
+    "@orven/core": "workspace:^"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "4.0.4",

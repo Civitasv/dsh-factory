@@ -1,70 +1,30 @@
-# @dsh-factory/plugin-dsh
+# @orven/plugin-dsh
 
-DeepSeek Harness adapter and installable DSH Bundle for DSH Factory.
+DeepSeek Harness adapter and installable DSH Bundle for Orven.
 
 ## Install
 
-Install the bundle into any base-backed DSH profile:
-
 ~~~bash
-dsh plugin --profile web add @dsh-factory/plugin-dsh
+dsh plugin --profile web add @orven/plugin-dsh
 ~~~
 
 or:
 
 ~~~bash
-dsh plugin --profile headless add @dsh-factory/plugin-dsh
+dsh plugin --profile headless add @orven/plugin-dsh
 ~~~
 
-The bundle inserts one Cordis row named `factory` and publishes `ctx.factory`.
+The bundle mounts Orven into the DSH Cordis graph and publishes the compatibility service `ctx.factory`.
 
-Verify the composed profile before booting:
-
-~~~bash
-dsh --profile web --dump-config
-~~~
-
-Then boot normally:
-
-~~~bash
-dsh web
-~~~
-
-## Persistence
-
-The shipped bundle uses:
+Override persistence in the profile's later `cordis.patch.yml` layer:
 
 ~~~yaml
-graphId: factory
-~~~
-
-with in-memory persistence.
-
-Override the Factory row in the profile's later `cordis.patch.yml` layer to enable durable JSONL storage:
-
-~~~yaml
-- id: factory
+- id: orven
   config:
     graphId: my-project
-    persistenceDirectory: ./.factory
-~~~
-
-DSH's ordinary patch precedence applies.
-
-## Tarball install
-
-A prebuilt tarball can be installed without running package build scripts:
-
-~~~bash
-dsh plugin --profile web add ./dsh-factory-plugin-dsh-0.1.0.tgz
-~~~
-
-## Remove
-
-~~~bash
-dsh plugin --profile web remove @dsh-factory/plugin-dsh
+    persistenceDirectory: ./.orven
 ~~~
 
 ## Architecture
 
-This package is only the DeepSeek Harness adapter. Change Graph, Evidence, Context, Policy, Work, Execution, and persistence live in harness-neutral `@dsh-factory/*` packages so another Agent Harness can be supported with a parallel adapter.
+This package is only the DSH adapter. The Harness-neutral product API is `@orven/core`. Future Harness integrations should be parallel `@orven/plugin-*` packages rather than changes to Core.

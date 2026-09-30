@@ -1,7 +1,6 @@
-# DSH Factory bundle layer.
-# DSH core services remain owned by the selected base-backed profile.
+# Orven bundle layer for DeepSeek Harness.
 - insert:
-    - id: factory
-      name: '@dsh-factory/plugin-dsh'
+    - id: orven
+      name: '@orven/plugin-dsh'
       config:
-        graphId: factory
+        graphId: orven
