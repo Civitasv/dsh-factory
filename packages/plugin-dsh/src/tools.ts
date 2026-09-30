@@ -9,10 +9,7 @@ import type {
   ChangeId,
   ChangeKind,
 } from '@orven/core'
-import type {
-  BeginChangeResult,
-  ChangeStatus,
-} from '@orven/core/application'
+import type { ChangeStatus } from '@orven/core/application'
 import type { CapabilityId } from '@orven/core/work'
 import { DshRuntimeOutcomeCollector } from './collector.js'
 import type { OrvenService } from './service.js'
@@ -200,7 +197,51 @@ const statusOutput = {
   },
 } as const
 
-function renderStatus(status: ChangeStatus): string {
+function serializeStatus(status: ChangeStatus) {
+  return {
+    changeId: String(status.changeId),
+    graphRevision: Number(status.graphRevision),
+    title: status.title,
+    kind: status.kind,
+    criteria: status.criteria.map(criterion => ({
+      criterionId: String(criterion.criterionId),
+      revision: criterion.revision,
+      statement: criterion.statement,
+      severity: criterion.severity,
+      evidence: { ...criterion.evidence },
+    })),
+    gates: status.gates.map(gate => ({
+      gateId: String(gate.gateId),
+      kind: gate.kind,
+      state: gate.state,
+      evidenceCount: gate.evidenceCount,
+    })),
+    runs: {
+      total: status.runs.total,
+      succeeded: status.runs.succeeded,
+      failed: status.runs.failed,
+      cancelled: status.runs.cancelled,
+      ...(status.runs.latest === undefined
+        ? {}
+        : {
+            latest: {
+              runId: String(status.runs.latest.runId),
+              status: status.runs.latest.status,
+              objective: status.runs.latest.objective,
+              startedAt: status.runs.latest.startedAt,
+              finishedAt: status.runs.latest.finishedAt,
+            },
+          }),
+    },
+    ...(status.disposition === undefined
+      ? {}
+      : { disposition: status.disposition }),
+  }
+}
+
+type ToolStatus = ReturnType<typeof serializeStatus>
+
+function renderStatus(status: ToolStatus): string {
   const supporting = status.criteria.reduce(
     (total, criterion) => total + criterion.evidence.supporting,
     0,
@@ -286,7 +327,7 @@ export function apply(ctx: Context): void {
           + `with ${value.criteria.length} acceptance criteria. It is now active for this DSH Session.`,
       }],
     },
-    async execute(args, exec): Promise<BeginChangeResult> {
+    async execute(args, exec) {
       const agent = requireAgent(exec.agent, 'orven_begin_change')
       const created = await ctx.orven.beginChange({
         title: args.title,
@@ -300,7 +341,17 @@ export function apply(ctx: Context): void {
         actor: actorFor(agent),
       })
       bindChange(agent, created.changeId)
-      return created
+      return {
+        changeId: String(created.changeId),
+        graphRevision: Number(created.graphRevision),
+        gateId: String(created.gateId),
+        criteria: created.criteria.map(criterion => ({
+          criterionId: String(criterion.criterionId),
+          revision: criterion.revision,
+          statement: criterion.statement,
+          severity: criterion.severity,
+        })),
+      }
     },
   }))
 
@@ -314,12 +365,12 @@ export function apply(ctx: Context): void {
       schema: statusOutput,
       render: (_args, value) => [{
         type: 'text',
-        text: renderStatus(value as ChangeStatus),
+        text: renderStatus(value),
       }],
     },
-    execute(_args, exec): ChangeStatus {
+    async execute(_args, exec) {
       const agent = requireAgent(exec.agent, 'orven_status')
-      return ctx.orven.status(activeChange(ctx, agent))
+      return serializeStatus(ctx.orven.status(activeChange(ctx, agent)))
     },
   }))
 
