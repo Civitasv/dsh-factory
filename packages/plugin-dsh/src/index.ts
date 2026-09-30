@@ -2,6 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-agent'
+import type {} from '@deepseek-ai/dsh-client-connection'
 import type {} from '@deepseek-ai/dsh-session-projection'
 import type {} from '@deepseek-ai/dsh-system-prompt'
 import type {} from '@deepseek-ai/dsh-tools'
@@ -10,6 +11,7 @@ import { InMemoryEventStore } from '@orven/core/events'
 import { JsonlEventStore } from '@orven/core/persistence'
 import { DshExecutionAdapter } from './adapter.js'
 import { Config, type Config as OrvenPluginConfig } from './config.js'
+import { registerOrvenGraphRoute } from './graph-route.js'
 import { registerOrvenOrchestrationGuidance } from './orchestration.js'
 import { registerOrvenSessionProjection } from './session-binding.js'
 import { OrvenService } from './service.js'
@@ -19,6 +21,7 @@ import { registerOrvenModelTools } from './tools.js'
 export * from './adapter.js'
 export * from './change-loop.js'
 export * from './config.js'
+export * from './graph-wire.js'
 export * from './messages.js'
 export * from './orchestration.js'
 export * from './service.js'
@@ -99,6 +102,9 @@ export async function apply(
   )
 
   registerOrvenSessionProjection(ctx)
+  ctx.inject(['connection'], connectionCtx => {
+    registerOrvenGraphRoute(connectionCtx, service)
+  })
   registerOrvenModelTools(ctx, service)
   registerOrvenOrchestrationGuidance(
     ctx,
