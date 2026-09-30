@@ -4,3 +4,7 @@
       name: '@orven/plugin-dsh'
       config:
         graphId: orven
+        persistenceDirectory: ./.orven
+
+    - id: orven-tools
+      name: '@orven/plugin-dsh/tools'
