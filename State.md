@@ -2,32 +2,25 @@
 
 ## Release surface
 
-Features 01-06 foundations are implemented through capability-based Work.
+Features 01-07 foundations are implemented through the runtime-neutral Execution Protocol.
 
 ## Implemented
 
-- Change Graph, Evidence Protocol, Context Compilation, and Gates/Policy.
-- Work Demand -> deterministic Work Item materialization.
-- Namespaced semantic capabilities instead of persistent human-role agents.
-- Exact capability-set Worker eligibility.
-- Deterministic eligible Worker ordering.
-- Graph-Revision-pinned Work.
-- Local Work Plan DAG validation with one revision per plan.
-- Work carries Context compilation requests rather than conversation text.
-- GitHub Actions CI for typecheck, lint, and tests.
-
-## Architecture baseline
-
-- Global SDLC history may contain cycles.
-- One concrete Work Plan is a DAG.
-- Work is derived execution state, not a Change Graph node.
-- Worker identity is disposable runtime inventory.
-- DSH/Cordis remains an execution adapter.
+- Change Graph, Evidence, Context, Policy, and capability-based Work.
+- Freshness check before Work preparation.
+- ContextPack compilation bound to each prepared execution.
+- Explicit prepared/running/terminal lifecycle rules.
+- Second Graph Revision freshness check before accepting Worker outcome.
+- Stale outcomes cannot produce durable Run proposals.
+- Fresh outcomes map to durable Run records.
+- Failed-only bounded retry semantics.
+- Runtime adapters supply timestamps; protocol reads no global clock.
+- Structured output proposal boundary; diagnostics are not Evidence.
 
 ## Active limitations
 
-- Work is not executed yet; retries/cancellation/staleness belong to Feature-07.
+- DSH does not yet implement the execution adapter.
+- Domain Event append transaction remains outside Feature-07.
 - Production persistence is not implemented.
 - No GitHub/CI/release/production adapters.
-- DSH runtime does not yet execute Factory Work.
 - No end-user Graph UI.

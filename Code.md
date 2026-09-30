@@ -11,19 +11,17 @@ Use this as the first navigation surface for humans and agents.
 | Context Compilation | `Docs/Specs/Feature-04 Context Compilation.md` | `packages/context/` |
 | Gates and Policy | `Docs/Specs/Feature-05 Gates and Policy.md` | `packages/policy/` |
 | Work and Capabilities | `Docs/Specs/Feature-06 Work and Capabilities.md` | `packages/work/` |
+| Execution Protocol | `Docs/Specs/Feature-07 Execution Protocol.md` | `packages/execution/` |
 | DSH/Cordis integration | `Docs/Architecture/DSH Integration.md` | `packages/runtime-dsh/` |
 | Validation | `Docs/Development/Validation.md` | `.github/workflows/ci.yml` |
-
-## Dependency direction
-
-Domain capability packages depend inward on `packages/core`. Outer runtime/integration packages consume them, never the reverse.
 
 ## Change routing
 
 - domain schemas -> `packages/core`;
-- Evidence validation/applicability/coverage -> `packages/evidence`;
-- Context compilation -> `packages/context`;
-- Gate assessment/authority policy -> `packages/policy`;
-- capability-based Work and local execution plans -> `packages/work`;
-- Event vocabulary/projection -> `packages/events`;
+- Evidence -> `packages/evidence`;
+- Context -> `packages/context`;
+- Gates/Policy -> `packages/policy`;
+- Work/capabilities -> `packages/work`;
+- runtime-neutral execution transaction -> `packages/execution`;
+- Event Log/projection -> `packages/events`;
 - DSH lifecycle -> `packages/runtime-dsh`.
