@@ -20,7 +20,7 @@ export const inject = ['agents']
 
 declare module '@deepseek-ai/cordis' {
   interface Context {
-    factory: OrvenService
+    orven: OrvenService
   }
 }
 
@@ -51,7 +51,7 @@ export async function apply(
     store,
     new DshExecutionAdapter(ctx.agents),
   )
-  ctx.provide('factory', service)
+  ctx.provide('orven', service)
 }
 
 void Config

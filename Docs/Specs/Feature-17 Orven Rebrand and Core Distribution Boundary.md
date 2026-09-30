@@ -143,7 +143,7 @@ The bundle mounts:
         graphId: orven
 ~~~
 
-For compatibility, the Cordis service remains ctx.factory in Feature-17. Renaming it is a separate API decision.
+Feature-17 originally retained ctx.factory for compatibility. Feature-18 Orven Service Identity supersedes that temporary decision and standardizes the service as ctx.orven without an alias.
 
 The DSH message-source kind changes from dsh-factory to orven.
 
@@ -211,7 +211,7 @@ real DSH AgentRegistry
   ↓
 @orven/plugin-dsh
   ↓
-ctx.factory
+ctx.orven
   ↓
 @orven/core
   ↓
@@ -282,7 +282,6 @@ install
 
 ## Non-goals
 
-- renaming ctx.factory;
 - publishing to npm;
 - configuring npm @orven scope ownership;
 - renaming the GitHub repository through code;

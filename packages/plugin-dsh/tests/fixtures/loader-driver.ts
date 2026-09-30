@@ -24,14 +24,14 @@ try {
   })
   await ctx.loader.await()
 
-  const factory = ctx.get('factory') as OrvenService | undefined
-  if (factory === undefined) {
-    throw new Error('Orven Loader smoke did not publish ctx.factory')
+  const orven = ctx.get('orven') as OrvenService | undefined
+  if (orven === undefined) {
+    throw new Error('Orven Loader smoke did not publish ctx.orven')
   }
 
   const actor: ActorRef = { kind: 'system', id: 'loader-smoke' }
   const changeId = 'CHG-LOADER' as never
-  await factory.append({
+  await orven.append({
     changeId,
     expectedSequence: 0,
     actor,
@@ -57,7 +57,7 @@ try {
   const work: WorkItem = {
     id: 'work:loader-smoke' as never,
     changeId,
-    graphRevision: factory.currentRevision(),
+    graphRevision: orven.currentRevision(),
     objective: 'Prove Orven executes inside DSH',
     requiredCapabilities: [capability],
     priority: 'normal',
@@ -80,7 +80,7 @@ try {
     },
   }
 
-  const result = await factory.executeWork({
+  const result = await orven.executeWork({
     work,
     worker: {
       id: 'loader-worker',
@@ -112,9 +112,9 @@ try {
 
   process.stdout.write(JSON.stringify({
     service: true,
-    graphId: String(factory.graphId),
-    revision: Number(factory.currentRevision()),
-    nodes: factory.snapshot().nodes.length,
+    graphId: String(orven.graphId),
+    revision: Number(orven.currentRevision()),
+    nodes: orven.snapshot().nodes.length,
     executionState: result.state,
   }) + '\n')
 } finally {

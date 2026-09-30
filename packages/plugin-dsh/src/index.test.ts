@@ -23,7 +23,7 @@ describe('Orven plugin', () => {
     expect(Config).toBeDefined()
   })
 
-  it('publishes ctx.factory only after service construction', async () => {
+  it('publishes ctx.orven only after service construction', async () => {
     let key = ''
     let provided: unknown
     const ctx = {
@@ -41,12 +41,12 @@ describe('Orven plugin', () => {
 
     await apply(ctx, { graphId: 'plugin-test' })
 
-    expect(key).toBe('factory')
+    expect(key).toBe('orven')
     expect(provided).toBeInstanceOf(OrvenService)
   })
 
   it('opens the JSONL Event Store when persistenceDirectory is configured', async () => {
-    const directory = await mkdtemp(join(tmpdir(), 'dsh-factory-plugin-'))
+    const directory = await mkdtemp(join(tmpdir(), 'orven-plugin-'))
     try {
       let service: OrvenService | undefined
       const ctx = {
@@ -66,7 +66,7 @@ describe('Orven plugin', () => {
         persistenceDirectory: directory,
       })
 
-      if (service === undefined) throw new Error('Factory service was not published')
+      if (service === undefined) throw new Error('Orven service was not published')
 
       const actor: ActorRef = { kind: 'system', id: 'test' }
       const changeId = 'CHG-PERSIST' as ChangeId
