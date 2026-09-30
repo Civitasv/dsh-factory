@@ -63,6 +63,14 @@ describe('Orven plugin', () => {
             throw new Error('unused')
           },
         },
+        tools: {
+          register: () => () => {},
+        },
+        sessionProjections: {
+          register: () => () => {},
+        },
+        on: () => () => {},
+        logger: { warn: () => {} },
         provide: (_key: string, value: unknown) => {
           service = value as OrvenService
           return () => {}
