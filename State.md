@@ -2,31 +2,31 @@
 
 ## Release surface
 
-Features 01-05 foundations are implemented: repository baseline, Change Graph, Evidence Protocol, Context Compilation, and Gates/Policy.
+Features 01-06 foundations are implemented through capability-based Work.
 
 ## Implemented
 
-- Change-centric event-sourced domain and deterministic graph projection.
-- Reality-bound Evidence validation/applicability/coverage.
-- Deterministic ContextPack compilation and hashing.
-- Exact Criterion-revision Gate Policies.
-- Pure Gate assessment from Evidence Coverage and Finding blockers.
-- Explicit authorized `not_required` decisions.
-- No direct human/agent override from missing Evidence to satisfied.
-- Deterministic Gate Evidence aggregation and assessment reasons.
+- Change Graph, Evidence Protocol, Context Compilation, and Gates/Policy.
+- Work Demand -> deterministic Work Item materialization.
+- Namespaced semantic capabilities instead of persistent human-role agents.
+- Exact capability-set Worker eligibility.
+- Deterministic eligible Worker ordering.
+- Graph-Revision-pinned Work.
+- Local Work Plan DAG validation with one revision per plan.
+- Work carries Context compilation requests rather than conversation text.
 - GitHub Actions CI for typecheck, lint, and tests.
 
 ## Architecture baseline
 
-- Evidence answers what is known.
-- Policy answers whether that knowledge is sufficient.
-- Human subjective approval enters through Evidence such as human attestation.
-- Gate state is derived and does not become Change status.
+- Global SDLC history may contain cycles.
+- One concrete Work Plan is a DAG.
+- Work is derived execution state, not a Change Graph node.
+- Worker identity is disposable runtime inventory.
 - DSH/Cordis remains an execution adapter.
 
 ## Active limitations
 
-- Work/capability discovery and execution protocol are not implemented.
+- Work is not executed yet; retries/cancellation/staleness belong to Feature-07.
 - Production persistence is not implemented.
 - No GitHub/CI/release/production adapters.
 - DSH runtime does not yet execute Factory Work.
