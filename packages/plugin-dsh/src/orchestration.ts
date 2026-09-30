@@ -23,10 +23,6 @@ export const ORVEN_MODEL_TOOLS = [
   'orven_record_evidence',
 ] as const
 
-function guidanceVisible(ctx: Context, scope: Parameters<Context['tools']['get']>[1]): boolean {
-  return ORVEN_MODEL_TOOLS.every(name => ctx.tools.get(name, scope) !== undefined)
-}
-
 export function registerOrvenOrchestrationGuidance(
   ctx: Context,
   mode: OrvenOrchestrationMode,
@@ -36,8 +32,9 @@ export function registerOrvenOrchestrationGuidance(
   ctx.systemPrompt.section({
     name: ORVEN_GUIDANCE_SECTION,
     order: ORVEN_GUIDANCE_ORDER,
-    text: ({ scope }) => guidanceVisible(ctx, scope)
-      ? ORVEN_GUIDANCE_TEXT
-      : '',
+    text: ({ scope }) =>
+      ORVEN_MODEL_TOOLS.every(name => ctx.tools.get(name, scope) !== undefined)
+        ? ORVEN_GUIDANCE_TEXT
+        : '',
   })
 }

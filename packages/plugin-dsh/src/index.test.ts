@@ -72,6 +72,9 @@ describe('Orven plugin', () => {
         sessionProjections: {
           register: () => () => {},
         },
+        systemPrompt: {
+          section: () => () => {},
+        },
         on: () => () => {},
         logger: { warn: () => {} },
         provide: (_key: string, value: unknown) => {
