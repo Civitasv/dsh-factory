@@ -2,20 +2,20 @@
 
 ## Release surface
 
-Features 01-10 are implemented through GitHub collaboration ingestion.
+Features 01-11 are implemented through CI/test Evidence ingestion.
 
 ## Implemented
 
-- Change Graph, Evidence, Context, Policy, Work, Execution, DSH runtime, and durable local Event persistence.
-- Immutable content-addressed GitHub Issue/PR/commit Artifacts.
-- Replayable normalized GitHub snapshot metadata.
-- Explicit Issue-to-Change intent proposal with caller-selected Change kind.
-- GitHub mutable state is not used as Factory Gate/Change truth.
-- GitHub read transport is isolated behind a port.
+- Change Graph through durable persistence and GitHub collaboration ingestion.
+- Provider-neutral CI Test Run and Static Analysis snapshots.
+- Content-addressed CI run Artifacts.
+- Reality-bound `factory/test-execution@1` and `factory/static-analysis@1` Evidence generation.
+- Deterministic passed/failed/cancelled mapping to supports/contradicts/inconclusive.
+- Feature-03 Registry validation remains the Evidence schema authority.
+- External CI status does not directly mutate Gates.
 
 ## Active limitations
 
-- No GitHub App/webhook transport implementation.
-- CI Check Run ingestion belongs to Feature-11.
-- No release/production adapters yet.
-- No end-user Graph UI.
+- CI providers still need host-specific REST/webhook implementations.
+- Release/deployment model is next.
+- Production observation and Graph UI are not implemented.
