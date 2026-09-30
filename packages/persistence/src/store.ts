@@ -12,6 +12,7 @@ import {
 import {
   assertEventLogConsistency,
   ConcurrencyConflictError,
+  GraphRevisionConflictError,
   projectChangeGraph,
   type AppendRequest,
   type DomainEvent,
@@ -177,6 +178,17 @@ export class JsonlEventStore {
 
     const changeId = request.changeId
     const expectedSequence = request.expectedSequence
+    const expectedRevision = request.expectedRevision
+
+    if (
+      expectedRevision !== undefined &&
+      expectedRevision !== this.currentRevision()
+    ) {
+      throw new GraphRevisionConflictError(
+        expectedRevision,
+        this.currentRevision(),
+      )
+    }
 
     if (changeId === undefined && expectedSequence !== undefined) {
       throw new Error('expectedSequence requires changeId')
