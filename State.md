@@ -2,35 +2,32 @@
 
 ## Release surface
 
-Features 01-15 are implemented through the DSH plugin runtime and graph-first browser explorer.
+Features 01-16 are implemented through publish-ready layered packages and the DeepSeek Harness adapter.
 
 ## Implemented
 
-- Change-centric event-sourced SDLC domain through production feedback ingestion.
-- Evidence-driven verification, deterministic Context compilation, Policy/Gates, capability-based Work, and runtime-neutral execution.
-- Factory is mounted inside DeepSeek Harness as the `@dsh-factory/plugin-dsh` namespace plugin.
-- The public DSH service is `ctx.factory`.
-- `ctx.factory` owns Event Store projection/append plus Work preparation and execution through the public `ctx.agents` seam.
-- In-memory Event Store is the default; configured plugin persistence uses the JSONL Event Store.
-- DSH Agent execution retains deterministic Session identity, Context-before-objective ordering, cancellation propagation, freshness checks, and owned handle disposal.
-- A real Cordis Loader/process smoke mounts the real DSH AgentRegistry, a deterministic test AgentFactory, and the Factory plugin, then completes one Factory Work execution.
-- Atomic local Event Log persistence and deterministic replay.
-- GitHub and CI/Test normalization into immutable Factory Artifacts/Evidence.
-- Release/deployment and production observation protocols.
-- Framework-free graph-first UI projection.
+- Harness-neutral Change Graph, Evidence, Context, Policy, Work, Execution, persistence, integrations, and Graph UI packages.
+- DeepSeek Harness support is isolated in `@dsh-factory/plugin-dsh`.
+- All reusable packages are publishable public npm packages at synchronized version `0.1.0`.
+- Internal Factory dependencies use workspace semantic ranges that pnpm rewrites during pack/publish.
+- `plugin-dsh` is a standard DSH Bundle with `dsh.bundle.patch` and a shipped `cordis.patch.yml`.
+- DSH users install one adapter package; neutral Factory packages resolve transitively.
+- Public packages ship compiled JavaScript/types and exclude source/tests/build configuration.
+- Public packages require no install-time `prepare`/`install`/`postinstall` build.
+- CI builds and packs every public package, checks packed manifests for leaked `workspace:` protocols, and verifies tarball hygiene.
+- Real DSH Loader/process integration remains covered by Feature-15.
 
 ## Architecture baseline
 
-- DSH is the harness/runtime host; Factory is an SDLC plugin inside DSH.
-- Internal Factory packages are libraries behind one plugin composition root.
-- DSH owns Agent loop, Session, model, tool, skill, and sandbox mechanics.
-- Factory owns Change/Evidence/Context/Policy/Work/SDLC execution semantics and related integrations.
-- The Change Graph/Event Log remains authoritative; DSH Sessions are execution provenance, not Change state.
-- Arbitrary assistant prose is never trusted Evidence.
+- Agent Harnesses are outer adapters, not dependencies of Factory domain semantics.
+- DSH is the currently supported host through `packages/plugin-dsh`.
+- A future Agent Harness can add `plugin-<harness>` while reusing the neutral packages.
+- Source layering is preserved in distribution; user installation remains one-package UX.
+- Event Log / Change Graph remains authoritative regardless of Harness.
 
 ## Active limitations
 
-- The standard production Outcome Collector protocol is still caller-provided; arbitrary DSH Session history is not automatically promoted into typed Factory output.
-- The plugin is not yet published as an npm package.
-- Live GitHub/CI/telemetry transports still require host-specific clients.
+- Packages are publish-ready but this repository has not actually published them to an npm registry.
+- Registry scope ownership/credentials are external maintainer setup.
+- The standard production Outcome Collector remains caller-provided.
 - Graph UI is not yet mounted into the DSH Web slot system.
