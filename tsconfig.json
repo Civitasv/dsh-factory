@@ -41,6 +41,9 @@
       "path": "./packages/graph-ui"
     },
     {
+      "path": "./packages/application"
+    },
+    {
       "path": "./packages/core"
     },
     {
