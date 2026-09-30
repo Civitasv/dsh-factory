@@ -15,7 +15,8 @@ export default defineConfig({
   "integration-ci": "src/integration-ci.ts",
   "release": "src/release.ts",
   "observation": "src/observation.ts",
-  "graph-ui": "src/graph-ui.ts"
+  "graph-ui": "src/graph-ui.ts",
+  "application": "src/application.ts"
 },
   outDir: 'dist',
   format: ['esm'],
