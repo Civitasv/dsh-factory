@@ -8,7 +8,10 @@ import {
   type EventId,
   type GraphId,
 } from '@orven/internal-domain'
-import { ConcurrencyConflictError } from '@orven/internal-events'
+import {
+  ConcurrencyConflictError,
+  GraphRevisionConflictError,
+} from '@orven/internal-events'
 import { JsonlEventStore } from './index.js'
 
 const actor: ActorRef = { kind: 'system', id: 'test' }
@@ -94,6 +97,38 @@ describe('JsonlEventStore', () => {
         events: [createEvent('EVT-1')],
       }),
     ).rejects.toThrow('Duplicate event id')
+  })
+
+  it('rejects stale Graph revision atomically at the serialized append boundary', async () => {
+    const path = await directory()
+    const store = await JsonlEventStore.open(path, graphId)
+
+    await store.append({
+      changeId,
+      expectedSequence: 0,
+      expectedRevision: store.currentRevision(),
+      actor,
+      events: [createEvent('EVT-1')],
+    })
+
+    await expect(
+      store.append({
+        changeId,
+        expectedSequence: 1,
+        expectedRevision: 0 as never,
+        actor,
+        events: [
+          {
+            eventId: 'EVT-2' as EventId,
+            occurredAt: '2026-09-30T00:00:01Z',
+            event: { type: 'change.closed', changeId, disposition: 'completed' },
+          },
+        ],
+      }),
+    ).rejects.toBeInstanceOf(GraphRevisionConflictError)
+
+    expect(store.currentRevision()).toBe(1)
+    expect(store.currentSequence(changeId)).toBe(1)
   })
 
   it('publishes a multi-event batch completely', async () => {
