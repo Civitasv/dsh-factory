@@ -212,6 +212,7 @@ try {
       "await import('@orven/core/execution')",
       "await import('@orven/core/application')",
       "await import('@orven/plugin-dsh')",
+      "await import('@orven/plugin-dsh/tools')",
     ].join('; '),
   ], consumer)
 } finally {
