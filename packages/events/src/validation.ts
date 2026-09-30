@@ -1,4 +1,4 @@
-import type { ChangeId, GraphId } from '@dsh-factory/core'
+import type { ChangeId, GraphId } from '@orven/internal-domain'
 import type { EventEnvelope } from './events.js'
 
 export function assertEventLogConsistency(

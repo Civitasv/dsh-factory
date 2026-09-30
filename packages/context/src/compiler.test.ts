@@ -10,7 +10,7 @@ import {
   type EvidenceKindId,
   type GraphId,
   type RelationId,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import { compileContext } from './index.js'
 
 const actor: ActorRef = { kind: 'system', id: 'test' }

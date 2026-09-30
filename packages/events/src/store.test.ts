@@ -4,7 +4,7 @@ import {
   type ChangeId,
   type EventId,
   type GraphId,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import {
   ConcurrencyConflictError,
   InMemoryEventStore,

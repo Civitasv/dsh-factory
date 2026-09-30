@@ -7,7 +7,7 @@ import {
   type EventId,
   type GraphId,
   type GraphRevision,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import type { DomainEvent, EventEnvelope, PendingEvent } from './events.js'
 
 export class ConcurrencyConflictError extends Error {

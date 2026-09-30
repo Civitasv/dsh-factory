@@ -11,7 +11,7 @@ import {
   type GraphId,
   type RelationId,
   type RunId,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import {
   InMemoryEventStore,
   projectChangeGraph,
