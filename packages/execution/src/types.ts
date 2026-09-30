@@ -8,8 +8,8 @@ import type {
   Finding,
   GraphRevision,
   Run,
-} from '@dsh-factory/core'
-import type { WorkItem, WorkerDescriptor } from '@dsh-factory/work'
+} from '@orven/internal-domain'
+import type { WorkItem, WorkerDescriptor } from '@orven/internal-work'
 
 export type ExecutionId = Brand<string, 'ExecutionId'>
 export type ExecutionState =

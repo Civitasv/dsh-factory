@@ -6,9 +6,17 @@
     "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
   "references": [
-    { "path": "../core" },
-    { "path": "../context" },
-    { "path": "../work" }
+    {
+      "path": "../domain"
+    },
+    {
+      "path": "../context"
+    },
+    {
+      "path": "../work"
+    }
   ],
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts"
+  ]
 }

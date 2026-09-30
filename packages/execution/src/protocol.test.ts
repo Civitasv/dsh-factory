@@ -4,12 +4,12 @@ import {
   type ActorRef,
   type ChangeGraphSnapshot,
   type ChangeId,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import {
   materializeWork,
   type CapabilityId,
   type WorkerDescriptor,
-} from '@dsh-factory/work'
+} from '@orven/internal-work'
 import {
   acceptExecutionOutcome,
   canRetry,
