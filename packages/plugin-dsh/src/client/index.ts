@@ -1,7 +1,5 @@
 import { createElement, type ReactNode } from 'react'
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-api-session-controller/client'
-import type {} from '@deepseek-ai/dsh-client-connection/client'
 import type { MainPanelId } from '@deepseek-ai/dsh-client-ui-layout/client'
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import { IconBranchOutlineRegular } from '@deepseek-ai/dsh-client-ui-primitives'
@@ -11,10 +9,10 @@ import type {
 } from '@deepseek-ai/dsh-client-ui-slots'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
-import type {} from '@deepseek-ai/dsh-client-ui-session/client'
 import {
   ORVEN_PANEL_ID,
   OrvenGraphController,
+  type OrvenClientContext,
 } from './controller.js'
 import {
   ORVEN_PANEL_CSS,
@@ -43,7 +41,9 @@ function installStyles(): () => void {
 }
 
 export function apply(ctx: ClientContext): void {
-  const controller = new OrvenGraphController(ctx)
+  const controller = new OrvenGraphController(
+    ctx as unknown as OrvenClientContext,
+  )
   ctx.effect(
     () => () => { controller.dispose() },
     'orven: graph controller',

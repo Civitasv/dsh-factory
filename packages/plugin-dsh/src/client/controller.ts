@@ -1,8 +1,3 @@
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-api-session-controller/client'
-import type {} from '@deepseek-ai/dsh-client-connection/client'
-import type { MainPanelId } from '@deepseek-ai/dsh-client-ui-layout/client'
-import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import {
   isOrvenGraphDto,
   isOrvenGraphErrorDto,
@@ -13,7 +8,30 @@ import { scopeSnapshotToChange } from './graph-scope.js'
 
 const POLL_INTERVAL_MS = 1_500
 
-export const ORVEN_PANEL_ID = 'orven' as MainPanelId
+export const ORVEN_PANEL_ID = 'orven'
+
+interface OrvenClientSessionSummary {
+  readonly id: string
+  readonly retainedBy: Readonly<{ readonly mainView?: number }>
+}
+
+export interface OrvenClientContext {
+  readonly layout: {
+    readonly panelInfo: {
+      getSnapshot(): { readonly activePanelId: string | null }
+      subscribe(listener: () => void): () => void
+    }
+  }
+  readonly sessions: {
+    readonly list: {
+      getSnapshot(): {
+        readonly byId: Readonly<Record<string, OrvenClientSessionSummary>>
+      }
+      subscribe(listener: () => void): () => void
+    }
+  }
+  on(event: 'connection/reset', listener: () => void): () => void
+}
 
 export type OrvenGraphPanelPhase =
   | 'idle'
@@ -39,7 +57,7 @@ const INITIAL_STATE: OrvenGraphPanelState = {
   refreshing: false,
 }
 
-function currentSessionId(ctx: Context): string | undefined {
+function currentSessionId(ctx: OrvenClientContext): string | undefined {
   const list = ctx.sessions.list.getSnapshot()
   return Object.values(list.byId)
     .find(summary => (summary.retainedBy.mainView ?? 0) > 0)
@@ -66,7 +84,7 @@ export class OrvenGraphController {
   #etag: string | undefined
   #disposed = false
 
-  constructor(private readonly ctx: Context) {
+  constructor(private readonly ctx: OrvenClientContext) {
     this.#disposers.push(
       ctx.layout.panelInfo.subscribe(() => {
         const next = ctx.layout.panelInfo.getSnapshot().activePanelId === ORVEN_PANEL_ID
