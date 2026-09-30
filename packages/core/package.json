@@ -1,30 +1,163 @@
 {
-  "name": "@dsh-factory/core",
-  "description": "Harness-neutral domain contracts for DSH Factory.",
+  "name": "@orven/core",
+  "description": "Harness-neutral core runtime and public API for Orven.",
   "version": "0.1.0",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./domain": {
+      "types": "./src/domain.ts",
+      "default": "./src/domain.ts"
+    },
+    "./events": {
+      "types": "./src/events.ts",
+      "default": "./src/events.ts"
+    },
+    "./evidence": {
+      "types": "./src/evidence.ts",
+      "default": "./src/evidence.ts"
+    },
+    "./context": {
+      "types": "./src/context.ts",
+      "default": "./src/context.ts"
+    },
+    "./policy": {
+      "types": "./src/policy.ts",
+      "default": "./src/policy.ts"
+    },
+    "./work": {
+      "types": "./src/work.ts",
+      "default": "./src/work.ts"
+    },
+    "./execution": {
+      "types": "./src/execution.ts",
+      "default": "./src/execution.ts"
+    },
+    "./persistence": {
+      "types": "./src/persistence.ts",
+      "default": "./src/persistence.ts"
+    },
+    "./integration-github": {
+      "types": "./src/integration-github.ts",
+      "default": "./src/integration-github.ts"
+    },
+    "./integration-ci": {
+      "types": "./src/integration-ci.ts",
+      "default": "./src/integration-ci.ts"
+    },
+    "./release": {
+      "types": "./src/release.ts",
+      "default": "./src/release.ts"
+    },
+    "./observation": {
+      "types": "./src/observation.ts",
+      "default": "./src/observation.ts"
+    },
+    "./graph-ui": {
+      "types": "./src/graph-ui.ts",
+      "default": "./src/graph-ui.ts"
     },
     "./package.json": "./package.json"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Civitasv/dsh-factory.git",
+    "url": "git+https://github.com/Civitasv/Orven.git",
     "directory": "packages/core"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./domain": {
+        "types": "./dist/domain.d.ts",
+        "default": "./dist/domain.js"
+      },
+      "./events": {
+        "types": "./dist/events.d.ts",
+        "default": "./dist/events.js"
+      },
+      "./evidence": {
+        "types": "./dist/evidence.d.ts",
+        "default": "./dist/evidence.js"
+      },
+      "./context": {
+        "types": "./dist/context.d.ts",
+        "default": "./dist/context.js"
+      },
+      "./policy": {
+        "types": "./dist/policy.d.ts",
+        "default": "./dist/policy.js"
+      },
+      "./work": {
+        "types": "./dist/work.d.ts",
+        "default": "./dist/work.js"
+      },
+      "./execution": {
+        "types": "./dist/execution.d.ts",
+        "default": "./dist/execution.js"
+      },
+      "./persistence": {
+        "types": "./dist/persistence.d.ts",
+        "default": "./dist/persistence.js"
+      },
+      "./integration-github": {
+        "types": "./dist/integration-github.d.ts",
+        "default": "./dist/integration-github.js"
+      },
+      "./integration-ci": {
+        "types": "./dist/integration-ci.d.ts",
+        "default": "./dist/integration-ci.js"
+      },
+      "./release": {
+        "types": "./dist/release.d.ts",
+        "default": "./dist/release.js"
+      },
+      "./observation": {
+        "types": "./dist/observation.d.ts",
+        "default": "./dist/observation.js"
+      },
+      "./graph-ui": {
+        "types": "./dist/graph-ui.d.ts",
+        "default": "./dist/graph-ui.js"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "engines": {
     "node": "^22.19.0 || >=24.0.0"
   },
+  "devDependencies": {
+    "@orven/internal-domain": "workspace:*",
+    "@orven/internal-events": "workspace:*",
+    "@orven/internal-evidence": "workspace:*",
+    "@orven/internal-context": "workspace:*",
+    "@orven/internal-policy": "workspace:*",
+    "@orven/internal-work": "workspace:*",
+    "@orven/internal-execution": "workspace:*",
+    "@orven/internal-persistence": "workspace:*",
+    "@orven/internal-integration-github": "workspace:*",
+    "@orven/internal-integration-ci": "workspace:*",
+    "@orven/internal-release": "workspace:*",
+    "@orven/internal-observation": "workspace:*",
+    "@orven/internal-graph-ui": "workspace:*"
+  },
   "scripts": {
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "bundle": "tsdown --config tsdown.config.ts"
   }
 }

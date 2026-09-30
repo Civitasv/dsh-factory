@@ -1,14 +1,14 @@
 import type { Agent, AgentHandle, CreateAgentOptions } from '@deepseek-ai/dsh-agent'
 import { SessionId, type SessionId as DshSessionId } from '@deepseek-ai/dsh-session'
-import type { GraphRevision } from '@dsh-factory/core'
+import type { GraphRevision } from '@orven/core'
 import {
   acceptExecutionOutcome,
   startExecution,
   type ExecutionResult,
   type PreparedExecution,
   type WorkerOutcome,
-} from '@dsh-factory/execution'
-import { factoryContextMessage, factoryWorkMessage } from './messages.js'
+} from '@orven/core/execution'
+import { orvenContextMessage, orvenWorkMessage } from './messages.js'
 
 export interface DshAgentPort {
   create(options: CreateAgentOptions): Promise<AgentHandle>
@@ -30,7 +30,7 @@ export interface DshExecutionInput {
 }
 
 export function dshSessionId(executionId: string): DshSessionId {
-  return SessionId(`dsh-factory:${executionId}`)
+  return SessionId(`orven:${executionId}`)
 }
 
 export class DshExecutionAdapter {
@@ -44,7 +44,7 @@ export class DshExecutionAdapter {
     }
 
     if (input.signal?.aborted) {
-      throw new Error('DSH Factory execution was cancelled before agent creation')
+      throw new Error('Orven execution was cancelled before agent creation')
     }
 
     const running = startExecution(input.prepared)
@@ -63,8 +63,8 @@ export class DshExecutionAdapter {
     input.signal?.addEventListener('abort', onAbort, { once: true })
 
     try {
-      handle.agent.inject(factoryContextMessage(input.prepared))
-      handle.agent.followup(factoryWorkMessage(input.prepared))
+      handle.agent.inject(orvenContextMessage(input.prepared))
+      handle.agent.followup(orvenWorkMessage(input.prepared))
       await handle.agent.whenIdle()
 
       const outcome = aborted
@@ -74,7 +74,7 @@ export class DshExecutionAdapter {
             evidence: [],
             findings: [],
             decisions: [],
-            diagnostics: 'Factory execution cancelled by parent runtime.',
+            diagnostics: 'Orven execution cancelled by parent runtime.',
           }
         : await input.collector.collect(handle.agent, input.prepared)
 

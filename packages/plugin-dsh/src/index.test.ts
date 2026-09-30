@@ -7,18 +7,18 @@ import type {
   ActorRef,
   ChangeId,
   EventId,
-} from '@dsh-factory/core'
+} from '@orven/core'
 import {
   apply,
   Config,
-  FactoryService,
+  OrvenService,
   inject,
   name,
 } from './index.js'
 
-describe('DSH Factory plugin', () => {
+describe('Orven plugin', () => {
   it('declares the namespace-plugin contract', () => {
-    expect(name).toBe('dsh-factory')
+    expect(name).toBe('orven')
     expect(inject).toEqual(['agents'])
     expect(Config).toBeDefined()
   })
@@ -42,13 +42,13 @@ describe('DSH Factory plugin', () => {
     await apply(ctx, { graphId: 'plugin-test' })
 
     expect(key).toBe('factory')
-    expect(provided).toBeInstanceOf(FactoryService)
+    expect(provided).toBeInstanceOf(OrvenService)
   })
 
   it('opens the JSONL Event Store when persistenceDirectory is configured', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'dsh-factory-plugin-'))
     try {
-      let service: FactoryService | undefined
+      let service: OrvenService | undefined
       const ctx = {
         agents: {
           create: async () => {
@@ -56,7 +56,7 @@ describe('DSH Factory plugin', () => {
           },
         },
         provide: (_key: string, value: unknown) => {
-          service = value as FactoryService
+          service = value as OrvenService
           return () => {}
         },
       } as unknown as Context

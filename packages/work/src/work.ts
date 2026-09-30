@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import type { ContextQuery, ContextSelectionBudget, RelationKind } from '@dsh-factory/core'
+import type { ContextQuery, ContextSelectionBudget, RelationKind } from '@orven/internal-domain'
 import type {
   CapabilityId,
   WorkContextRequest,

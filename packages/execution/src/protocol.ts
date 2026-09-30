@@ -1,6 +1,6 @@
-import type { RunId } from '@dsh-factory/core'
-import { compileContext } from '@dsh-factory/context'
-import { workerCanExecute } from '@dsh-factory/work'
+import type { RunId } from '@orven/internal-domain'
+import { compileContext } from '@orven/internal-context'
+import { workerCanExecute } from '@orven/internal-work'
 import type {
   AcceptOutcomeInput,
   AcceptedExecutionResult,

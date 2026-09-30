@@ -4,11 +4,11 @@ import type {
   Finding,
   FindingId,
   FindingLifecycleRecord,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import type {
   CriterionEvidenceCoverage,
   EvidenceRequirementCoverage,
-} from '@dsh-factory/evidence'
+} from '@orven/internal-evidence'
 import { validateGatePolicy } from './validation.js'
 import type {
   EvaluateGateInput,

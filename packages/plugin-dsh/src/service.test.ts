@@ -10,12 +10,12 @@ import {
   type ChangeId,
   type EventId,
   type GraphId,
-} from '@dsh-factory/core'
-import { InMemoryEventStore } from '@dsh-factory/events'
-import type { CapabilityId, WorkItem } from '@dsh-factory/work'
+} from '@orven/core'
+import { InMemoryEventStore } from '@orven/core/events'
+import type { CapabilityId, WorkItem } from '@orven/core/work'
 import {
   DshExecutionAdapter,
-  FactoryService,
+  OrvenService,
   type DshAgentPort,
 } from './index.js'
 
@@ -44,11 +44,11 @@ function fakePort(log: string[]): DshAgentPort {
   }
 }
 
-describe('FactoryService', () => {
+describe('OrvenService', () => {
   it('projects graph state and executes Work through the DSH port', async () => {
     const log: string[] = []
     const store = new InMemoryEventStore(graphId)
-    const service = new FactoryService(
+    const service = new OrvenService(
       store,
       new DshExecutionAdapter(fakePort(log)),
       () => '2026-09-30T00:00:00Z',

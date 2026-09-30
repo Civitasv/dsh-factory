@@ -6,7 +6,7 @@ import {
   type Evidence,
   type EvidenceId,
   type EvidenceRequirementId,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import {
   BUILTIN_EVIDENCE_KINDS,
   evaluateCriterionEvidenceCoverage,

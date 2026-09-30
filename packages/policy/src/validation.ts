@@ -1,4 +1,4 @@
-import type { ActorKind, CriterionRevisionRef, FindingSeverity } from '@dsh-factory/core'
+import type { ActorKind, CriterionRevisionRef, FindingSeverity } from '@orven/internal-domain'
 import type { GatePolicy, PolicyProfile } from './types.js'
 
 const ACTOR_KINDS = new Set<ActorKind>(['human', 'agent', 'system'])

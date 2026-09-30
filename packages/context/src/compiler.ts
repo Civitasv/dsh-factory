@@ -17,7 +17,7 @@ import {
   type JsonValue,
   type Relation,
   type RelationKind,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 
 export interface CompileContextInput {
   readonly snapshot: ChangeGraphSnapshot

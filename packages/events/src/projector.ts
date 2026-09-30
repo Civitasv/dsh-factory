@@ -21,7 +21,7 @@ import {
   type GraphNodeRef,
   type Relation,
   type RelationId,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import type { DomainEvent, EventEnvelope } from './events.js'
 import { assertEventLogConsistency } from './validation.js'
 

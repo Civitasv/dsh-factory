@@ -2,7 +2,7 @@ import {
   graphNodeKey,
   type ChangeGraphSnapshot,
   type GraphNodeRef,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import { buildGraphViewModel, graphNodeDetails } from './view-model.js'
 import { renderGraphSvgMarkup } from './svg.js'
 import type {
@@ -85,7 +85,7 @@ export function mountGraphExplorer(
 
   const root = document.createElement('section')
   root.className = 'dsh-graph-explorer'
-  root.setAttribute('aria-label', options.ariaLabel ?? 'DSH Factory Change Graph Explorer')
+  root.setAttribute('aria-label', options.ariaLabel ?? 'Orven Change Graph Explorer')
   root.tabIndex = 0
 
   const style = document.createElement('style')

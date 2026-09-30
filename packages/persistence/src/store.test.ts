@@ -7,8 +7,8 @@ import {
   type ChangeId,
   type EventId,
   type GraphId,
-} from '@dsh-factory/core'
-import { ConcurrencyConflictError } from '@dsh-factory/events'
+} from '@orven/internal-domain'
+import { ConcurrencyConflictError } from '@orven/internal-events'
 import { JsonlEventStore } from './index.js'
 
 const actor: ActorRef = { kind: 'system', id: 'test' }

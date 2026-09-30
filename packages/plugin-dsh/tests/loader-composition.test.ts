@@ -35,7 +35,7 @@ async function runLoaderComposition(): Promise<{
   })
 }
 
-describe('Factory real DSH Loader composition', () => {
+describe('Orven real DSH Loader composition', () => {
   it('mounts ctx.factory and executes Work through the real AgentRegistry', async () => {
     const result = await runLoaderComposition()
 
@@ -52,7 +52,7 @@ describe('Factory real DSH Loader composition', () => {
 
     expect(report).toEqual({
       service: true,
-      graphId: 'loader-smoke',
+      graphId: 'orven-loader-smoke',
       revision: 1,
       nodes: 1,
       executionState: 'succeeded',

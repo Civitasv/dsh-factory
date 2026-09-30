@@ -9,8 +9,8 @@ import type {
   GateId,
   GraphRevision,
   JsonValue,
-} from '@dsh-factory/core'
-import type { GateAssessment } from '@dsh-factory/policy'
+} from '@orven/internal-domain'
+import type { GateAssessment } from '@orven/internal-policy'
 
 export type ReleaseId = Brand<string, 'ReleaseId'>
 

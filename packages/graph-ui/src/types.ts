@@ -6,7 +6,7 @@ import type {
   GraphRevision,
   Relation,
   RelationKind,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 
 export interface GraphViewNode {
   readonly ref: GraphNodeRef

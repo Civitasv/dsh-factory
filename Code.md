@@ -1,29 +1,34 @@
-# DSH Factory Code Map
+# Orven Code Map
 
-Use this as the first navigation surface for humans and agents.
-
-| Area | Source of truth | Implementation |
+| Area | Contract | Implementation |
 | --- | --- | --- |
-| Architecture | `Docs/Architecture/Overview.md` | repository-wide |
-| Harness boundary | `Docs/Architecture/Harness Integration.md` | neutral packages + harness adapters |
-| Change Graph | `Docs/Specs/Feature-02 Change Graph.md` | `packages/core/`, `packages/events/` |
-| Evidence Protocol | `Docs/Specs/Feature-03 Evidence Protocol.md` | `packages/evidence/` |
-| Context Compilation | `Docs/Specs/Feature-04 Context Compilation.md` | `packages/context/` |
-| Gates and Policy | `Docs/Specs/Feature-05 Gates and Policy.md` | `packages/policy/` |
-| Work and Capabilities | `Docs/Specs/Feature-06 Work and Capabilities.md` | `packages/work/` |
-| Execution Protocol | `Docs/Specs/Feature-07 Execution Protocol.md` | `packages/execution/` |
-| DSH execution seam | `Docs/Specs/Feature-08 DSH Runtime Integration.md` | `packages/plugin-dsh/` |
-| Persistence | `Docs/Specs/Feature-09 Persistence.md` | `packages/persistence/` |
-| GitHub Integration | `Docs/Specs/Feature-10 GitHub Integration.md` | `packages/integration-github/` |
-| CI/Test Integration | `Docs/Specs/Feature-11 CI and Test Integration.md` | `packages/integration-ci/` |
-| Release & Deployment | `Docs/Specs/Feature-12 Release and Deployment.md` | `packages/release/` |
-| Production Observation | `Docs/Specs/Feature-13 Production Observation.md` | `packages/observation/` |
-| Graph UI | `Docs/Specs/Feature-14 Graph UI.md` | `packages/graph-ui/` |
-| DSH Plugin Runtime | `Docs/Specs/Feature-15 DSH Plugin Runtime.md` | `packages/plugin-dsh/` |
-| Distribution / portability | `Docs/Specs/Feature-16 Plugin Distribution and Harness Portability.md` | package manifests, `scripts/verify-distribution.mjs` |
+| Public neutral API | Feature-17 | `packages/core/` → `@orven/core` |
+| Domain model | Feature-02 | `packages/domain/` |
+| Event sourcing | Feature-02 | `packages/events/` |
+| Evidence | Feature-03 | `packages/evidence/` |
+| Context compilation | Feature-04 | `packages/context/` |
+| Gates / Policy | Feature-05 | `packages/policy/` |
+| Work | Feature-06 | `packages/work/` |
+| Execution | Feature-07 | `packages/execution/` |
+| Persistence | Feature-09 | `packages/persistence/` |
+| GitHub / CI | Features 10–11 | `packages/integration-*/` |
+| Release / Observation | Features 12–13 | `packages/release/`, `packages/observation/` |
+| Graph UI | Feature-14 | `packages/graph-ui/` |
+| DSH adapter | Features 15,17 | `packages/plugin-dsh/` |
+| Distribution | Feature-17 | `scripts/verify-distribution.mjs` |
 
-## Dependency boundary
+## Dependency direction
 
-Harness-neutral packages never import Harness-specific APIs.
+```text
+@orven/internal-domain
+        ↑
+private neutral modules
+        ↑
+   @orven/core
+        ↑
+@orven/plugin-dsh
+        ↑
+       DSH
+```
 
-`packages/plugin-dsh` is the current outer adapter. A future Harness should receive a parallel adapter package rather than modifications to the neutral core.
+A future Harness gets a parallel `@orven/plugin-*` package.

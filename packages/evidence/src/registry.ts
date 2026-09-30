@@ -1,4 +1,4 @@
-import type { Evidence, EvidenceKindId, JsonValue } from '@dsh-factory/core'
+import type { Evidence, EvidenceKindId, JsonValue } from '@orven/internal-domain'
 
 export interface EvidenceKindDefinition {
   readonly kind: EvidenceKindId

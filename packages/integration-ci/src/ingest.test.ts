@@ -3,11 +3,11 @@ import type {
   ActorRef,
   ArtifactId,
   CriterionId,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import {
   createBuiltInEvidenceRegistry,
   validateEvidence,
-} from '@dsh-factory/evidence'
+} from '@orven/internal-evidence'
 import { ingestStaticAnalysis, ingestTestRun } from './index.js'
 
 const actor: ActorRef = { kind: 'system', id: 'ci' }

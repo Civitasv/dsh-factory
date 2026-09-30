@@ -1,5 +1,5 @@
 {
-  "name": "dsh-factory",
+  "name": "orven",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,21 +9,22 @@
     "node": "^22.19.0 || >=24.0.0"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && pnpm --filter @orven/core bundle",
     "clean": "tsc -b --clean",
     "typecheck": "tsc -b --pretty false",
     "lint": "oxlint packages",
-    "test": "vitest run",
+    "test": "pnpm --filter @orven/core bundle && vitest run",
     "test:watch": "vitest",
     "distribution:verify": "node scripts/verify-distribution.mjs",
     "distribution:check": "pnpm build && pnpm distribution:verify",
-    "publish:dry-run": "pnpm build && pnpm -r --filter './packages/*' publish --dry-run --no-git-checks",
+    "publish:dry-run": "pnpm distribution:check && pnpm --filter @orven/core publish --dry-run --no-git-checks && pnpm --filter @orven/plugin-dsh publish --dry-run --no-git-checks",
     "check": "pnpm typecheck && pnpm lint && pnpm test"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "4.0.4",
     "@types/node": "^22.20.0",
     "oxlint": "1.76.0",
+    "tsdown": "^0.22.2",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"
   }

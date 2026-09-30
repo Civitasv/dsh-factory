@@ -6,12 +6,12 @@ import {
   type ChangeId,
   type EvidenceId,
   type GateId,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import {
   createBuiltInEvidenceRegistry,
   validateEvidence,
-} from '@dsh-factory/evidence'
-import type { GateAssessment } from '@dsh-factory/policy'
+} from '@orven/internal-evidence'
+import type { GateAssessment } from '@orven/internal-policy'
 import {
   deployRelease,
   prepareRelease,

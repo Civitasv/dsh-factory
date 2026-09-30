@@ -8,7 +8,7 @@ import {
   type EventId,
   type GraphId,
   type GraphRevision,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 import {
   assertEventLogConsistency,
   ConcurrencyConflictError,
@@ -16,7 +16,7 @@ import {
   type AppendRequest,
   type DomainEvent,
   type EventEnvelope,
-} from '@dsh-factory/events'
+} from '@orven/internal-events'
 
 const FORMAT_VERSION = 1
 const METADATA_FILE = 'graph.json'

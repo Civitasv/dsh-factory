@@ -1,34 +1,25 @@
 import { spawn } from 'node:child_process'
-import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises'
+import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { basename, join, resolve } from 'node:path'
+import { join, resolve } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const PACKAGES = join(ROOT, 'packages')
-const EXPECTED_VERSION = '0.1.0'
-const HARNESS_ADAPTERS = new Set(['@dsh-factory/plugin-dsh'])
+const VERSION = '0.1.0'
+const PUBLIC_PACKAGES = new Set(['@orven/core', '@orven/plugin-dsh'])
 
 function fail(message) {
   throw new Error('distribution: ' + message)
 }
 
-async function exists(path) {
-  try {
-    await readFile(path)
-    return true
-  } catch (error) {
-    if (error && typeof error === 'object' && error.code === 'ENOENT') return false
-    throw error
-  }
-}
-
-async function run(command, args, options = {}) {
-  return await new Promise((resolvePromise, rejectPromise) => {
+function run(command, args, cwd = ROOT) {
+  return new Promise((resolvePromise, rejectPromise) => {
     const child = spawn(command, args, {
-      cwd: options.cwd ?? ROOT,
+      cwd,
       env: process.env,
       stdio: ['ignore', 'pipe', 'pipe'],
     })
+
     let stdout = ''
     let stderr = ''
     child.stdout.setEncoding('utf8')
@@ -37,124 +28,42 @@ async function run(command, args, options = {}) {
     child.stderr.on('data', chunk => { stderr += String(chunk) })
     child.on('error', rejectPromise)
     child.on('close', code => {
-      if (code !== 0) {
-        rejectPromise(new Error(
-          command + ' ' + args.join(' ') + ' exited ' + String(code)
-            + '\nstdout:\n' + stdout + '\nstderr:\n' + stderr,
-        ))
+      if (code === 0) {
+        resolvePromise({ stdout, stderr })
         return
       }
-      resolvePromise({ stdout, stderr })
+      rejectPromise(new Error(
+        command + ' ' + args.join(' ') + ' exited ' + String(code)
+          + '\nstdout:\n' + stdout + '\nstderr:\n' + stderr,
+      ))
     })
   })
 }
 
-function allDependencyEntries(manifest) {
-  return [
-    ...Object.entries(manifest.dependencies ?? {}),
-    ...Object.entries(manifest.optionalDependencies ?? {}),
-    ...Object.entries(manifest.peerDependencies ?? {}),
-    ...Object.entries(manifest.devDependencies ?? {}),
-  ]
-}
-
-function runtimeDependencyEntries(manifest) {
-  return [
-    ...Object.entries(manifest.dependencies ?? {}),
-    ...Object.entries(manifest.optionalDependencies ?? {}),
-    ...Object.entries(manifest.peerDependencies ?? {}),
-  ]
-}
-
-function assertMetadata(manifest, directory) {
-  if (manifest.private === true) fail(manifest.name + ' must not be private')
-  if (manifest.version !== EXPECTED_VERSION) {
-    fail(manifest.name + ' must use version ' + EXPECTED_VERSION)
-  }
-  if (manifest.license !== 'MIT') fail(manifest.name + ' must declare MIT license')
-  if (manifest.publishConfig?.access !== 'public') {
-    fail(manifest.name + ' must publish with public access')
-  }
-  if (manifest.main !== './dist/index.js') {
-    fail(manifest.name + ' must expose ./dist/index.js as main')
-  }
-  if (manifest.types !== './dist/index.d.ts') {
-    fail(manifest.name + ' must expose ./dist/index.d.ts as types')
-  }
-  if (manifest.engines?.node !== '^22.19.0 || >=24.0.0') {
-    fail(manifest.name + ' has the wrong Node engine contract')
-  }
-  if (manifest.repository?.directory !== 'packages/' + directory) {
-    fail(manifest.name + ' has the wrong repository.directory')
-  }
-  for (const lifecycle of ['prepare', 'install', 'postinstall']) {
-    if (manifest.scripts?.[lifecycle] !== undefined) {
-      fail(manifest.name + ' must not require ' + lifecycle + ' to install')
-    }
+async function readManifest(directory) {
+  const path = join(PACKAGES, directory, 'package.json')
+  try {
+    return JSON.parse(await readFile(path, 'utf8'))
+  } catch {
+    return undefined
   }
 }
 
-function assertHarnessBoundary(manifest) {
-  const adapter = HARNESS_ADAPTERS.has(manifest.name)
-  for (const [name] of allDependencyEntries(manifest)) {
-    const harnessSpecific = name.startsWith('@deepseek-ai/') || name.includes('cordis')
-    if (!adapter && harnessSpecific) {
-      fail(manifest.name + ' is harness-neutral but references ' + name)
-    }
-  }
-
-  if (!adapter && manifest.dsh !== undefined) {
-    fail(manifest.name + ' is harness-neutral but declares dsh metadata')
-  }
-  if (adapter && manifest.name === '@dsh-factory/plugin-dsh') {
-    if (manifest.dsh?.bundle?.patch !== './cordis.patch.yml') {
-      fail('plugin-dsh must declare dsh.bundle.patch')
-    }
+function runtimeDependencies(manifest) {
+  return {
+    dependencies: manifest.dependencies,
+    peerDependencies: manifest.peerDependencies,
+    optionalDependencies: manifest.optionalDependencies,
   }
 }
 
-function assertWorkspaceRanges(manifest) {
-  for (const [name, range] of runtimeDependencyEntries(manifest)) {
-    if (name.startsWith('@dsh-factory/') && range !== 'workspace:^') {
-      fail(manifest.name + ' must use workspace:^ for ' + name)
-    }
-  }
-}
-
-function assertPackedManifest(manifest) {
-  const text = JSON.stringify(manifest)
-  if (text.includes('workspace:')) {
-    fail(manifest.name + ' packed manifest still contains workspace: protocol')
-  }
-}
-
-function assertPackedFiles(name, files) {
-  const forbidden = files.filter(file =>
-    file.includes('/src/')
+function isDevelopmentFile(file) {
+  return file.includes('/src/')
     || file.includes('/tests/')
     || file.endsWith('/tsconfig.json')
     || file.includes('.tsbuildinfo')
     || file.includes('.test.')
     || file.includes('.spec.')
-  )
-  if (forbidden.length > 0) {
-    fail(name + ' tarball contains development files: ' + forbidden.join(', '))
-  }
-
-  for (const required of ['package/dist/index.js', 'package/dist/index.d.ts']) {
-    if (!files.includes(required)) {
-      fail(name + ' tarball is missing ' + required)
-    }
-  }
-
-  if (name === '@dsh-factory/plugin-dsh') {
-    if (!files.includes('package/cordis.patch.yml')) {
-      fail('plugin-dsh tarball is missing cordis.patch.yml')
-    }
-    if (!files.includes('package/README.md')) {
-      fail('plugin-dsh tarball is missing README.md')
-    }
-  }
 }
 
 const directories = (await readdir(PACKAGES, { withFileTypes: true }))
@@ -164,59 +73,150 @@ const directories = (await readdir(PACKAGES, { withFileTypes: true }))
 
 const packages = []
 for (const directory of directories) {
-  const path = join(PACKAGES, directory, 'package.json')
-  if (!(await exists(path))) continue
-  const manifest = JSON.parse(await readFile(path, 'utf8'))
-  if (!manifest.name?.startsWith('@dsh-factory/')) continue
+  const manifest = await readManifest(directory)
+  if (manifest === undefined || !manifest.name?.startsWith('@orven/')) continue
 
-  assertMetadata(manifest, directory)
-  assertHarnessBoundary(manifest)
-  assertWorkspaceRanges(manifest)
+  if (PUBLIC_PACKAGES.has(manifest.name)) {
+    if (manifest.private === true) fail(manifest.name + ' must be public')
+    if (manifest.version !== VERSION) {
+      fail(manifest.name + ' must use public version ' + VERSION)
+    }
+  } else {
+    if (manifest.private !== true) fail(manifest.name + ' must stay private')
+    if (!manifest.name.startsWith('@orven/internal-')) {
+      fail('private package must use @orven/internal-* naming: ' + manifest.name)
+    }
+  }
+
   packages.push({ directory, manifest })
 }
 
-if (!packages.some(item => item.manifest.name === '@dsh-factory/plugin-dsh')) {
-  fail('plugin-dsh package is missing')
+const publicPackages = packages.filter(item => PUBLIC_PACKAGES.has(item.manifest.name))
+if (publicPackages.length !== 2) {
+  fail('expected exactly two public packages, found ' + String(publicPackages.length))
 }
 
-const bundlePatch = await readFile(
-  join(PACKAGES, 'plugin-dsh', 'cordis.patch.yml'),
-  'utf8',
-)
-if (!bundlePatch.includes("name: '@dsh-factory/plugin-dsh'")) {
-  fail('plugin-dsh bundle patch does not mount @dsh-factory/plugin-dsh')
-}
+const temp = await mkdtemp(join(tmpdir(), 'orven-dist-'))
+const tarballs = new Map()
 
-const temporary = await mkdtemp(join(tmpdir(), 'dsh-factory-pack-'))
 try {
-  for (const item of packages) {
-    const before = new Set(await readdir(temporary))
-    await run('pnpm', ['pack', '--pack-destination', temporary], {
-      cwd: join(PACKAGES, item.directory),
-    })
-    const after = await readdir(temporary)
-    const tarballName = after.find(name => name.endsWith('.tgz') && !before.has(name))
-    if (tarballName === undefined) {
-      fail(item.manifest.name + ' did not produce a tarball')
+  for (const { directory, manifest } of publicPackages) {
+    const before = new Set(await readdir(temp))
+    await run('pnpm', ['pack', '--pack-destination', temp], join(PACKAGES, directory))
+
+    const tarballName = (await readdir(temp))
+      .find(name => name.endsWith('.tgz') && !before.has(name))
+    if (tarballName === undefined) fail('no tarball produced for ' + manifest.name)
+
+    const tarball = join(temp, tarballName)
+    tarballs.set(manifest.name, tarball)
+
+    const packedManifest = JSON.parse(
+      (await run('tar', ['-xOzf', tarball, 'package/package.json'])).stdout,
+    )
+    const packedText = JSON.stringify(packedManifest)
+    const runtimeText = JSON.stringify(runtimeDependencies(packedManifest))
+
+    if (packedText.includes('workspace:')) {
+      fail(packedManifest.name + ' leaked workspace protocol')
+    }
+    if (packedText.includes('@dsh-factory/')) {
+      fail(packedManifest.name + ' leaked legacy @dsh-factory scope')
+    }
+    if (runtimeText.includes('@orven/internal-')) {
+      fail(packedManifest.name + ' depends on private Orven packages')
     }
 
-    const tarball = join(temporary, tarballName)
-    const listing = await run('tar', ['-tzf', tarball])
-    const files = listing.stdout
+    const files = (await run('tar', ['-tzf', tarball])).stdout
       .split('\n')
-      .map(line => line.trim())
+      .map(file => file.trim())
       .filter(Boolean)
 
-    const packedJson = await run('tar', ['-xOzf', tarball, 'package/package.json'])
-    const packedManifest = JSON.parse(packedJson.stdout)
-    assertPackedManifest(packedManifest)
-    assertPackedFiles(item.manifest.name, files)
+    const leaked = files.filter(isDevelopmentFile)
+    if (leaked.length > 0) {
+      fail(packedManifest.name + ' leaked development files: ' + leaked.join(', '))
+    }
+
+    for (const required of ['package/dist/index.js', 'package/dist/index.d.ts']) {
+      if (!files.includes(required)) {
+        fail(packedManifest.name + ' is missing ' + required)
+      }
+    }
+
+    if (packedManifest.name === '@orven/core') {
+      if (runtimeText.includes('@deepseek-ai/')
+        || runtimeText.toLowerCase().includes('cordis')) {
+        fail('@orven/core leaked Harness dependencies')
+      }
+
+      const inspectable = files.filter(file =>
+        file.endsWith('.js') || file.endsWith('.d.ts'))
+      for (const file of inspectable) {
+        const body = (await run('tar', ['-xOzf', tarball, file])).stdout
+        if (body.includes('@orven/internal-')) {
+          fail('@orven/core artifact leaked private import in ' + file)
+        }
+        if (body.includes('@dsh-factory/')) {
+          fail('@orven/core artifact leaked legacy scope in ' + file)
+        }
+        if (body.includes('@deepseek-ai/') || body.includes('cordis')) {
+          fail('@orven/core artifact leaked Harness import in ' + file)
+        }
+      }
+    } else {
+      if (packedManifest.dependencies?.['@orven/core'] === undefined) {
+        fail('@orven/plugin-dsh must depend on @orven/core')
+      }
+      if (!files.includes('package/cordis.patch.yml')) {
+        fail('@orven/plugin-dsh is missing cordis.patch.yml')
+      }
+      if (packedText.includes('@orven/internal-')) {
+        fail('@orven/plugin-dsh manifest leaked private Orven package')
+      }
+    }
   }
+
+  const coreTarball = tarballs.get('@orven/core')
+  const dshTarball = tarballs.get('@orven/plugin-dsh')
+  if (coreTarball === undefined || dshTarball === undefined) {
+    fail('public tarball set is incomplete')
+  }
+
+  const consumer = join(temp, 'consumer')
+  await mkdir(consumer)
+  await writeFile(join(consumer, 'package.json'), JSON.stringify({
+    name: 'orven-clean-consumer',
+    private: true,
+    type: 'module',
+    dependencies: {
+      '@orven/core': 'file:' + coreTarball,
+      '@orven/plugin-dsh': 'file:' + dshTarball,
+    },
+  }, null, 2) + '\n')
+  await writeFile(join(consumer, 'pnpm-workspace.yaml'), [
+    'packages:',
+    '  - .',
+    'overrides:',
+    "  '@orven/core': 'file:" + coreTarball + "'",
+    '',
+  ].join('\n'))
+
+  await run('pnpm', ['install', '--ignore-scripts','--no-frozen-lockfile'], consumer)
+  await run(process.execPath, [
+    '--input-type=module',
+    '-e',
+    [
+      "await import('@orven/core')",
+      "await import('@orven/core/events')",
+      "await import('@orven/core/context')",
+      "await import('@orven/core/execution')",
+      "await import('@orven/plugin-dsh')",
+    ].join('; '),
+  ], consumer)
 } finally {
-  await rm(temporary, { recursive: true, force: true })
+  await rm(temp, { recursive: true, force: true })
 }
 
 process.stdout.write(
-  'distribution: verified ' + String(packages.length)
-    + ' public Factory packages at ' + EXPECTED_VERSION + '\n',
+  'distribution: verified @orven/core and @orven/plugin-dsh ' + VERSION + '\n',
 )

@@ -11,8 +11,8 @@ import type {
   GateEvaluationInput,
   GateId,
   GateState,
-} from '@dsh-factory/core'
-import type { CriterionEvidenceCoverage } from '@dsh-factory/evidence'
+} from '@orven/internal-domain'
+import type { CriterionEvidenceCoverage } from '@orven/internal-evidence'
 
 export interface GatePolicy {
   readonly id: string

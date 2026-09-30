@@ -1,4 +1,4 @@
-import type { EvidenceKindId, JsonValue } from '@dsh-factory/core'
+import type { EvidenceKindId, JsonValue } from '@orven/internal-domain'
 import type { EvidenceKindDefinition } from './registry.js'
 import { EvidenceRegistry } from './registry.js'
 

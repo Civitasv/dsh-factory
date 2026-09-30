@@ -7,8 +7,8 @@ import type {
   FindingId,
   Gate,
   GateId,
-} from '@dsh-factory/core'
-import type { CriterionEvidenceCoverage } from '@dsh-factory/evidence'
+} from '@orven/internal-domain'
+import type { CriterionEvidenceCoverage } from '@orven/internal-evidence'
 import {
   evaluateGate,
   gateEvaluationInput,

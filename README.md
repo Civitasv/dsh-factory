@@ -1,57 +1,42 @@
-# DSH Factory
+# Orven
 
-AI-native software development system with a harness-neutral core and DeepSeek Harness support through an outer plugin adapter.
+Orven is an AI-native software-development runtime with a Harness-neutral core and thin Agent-Harness adapters.
 
-The project is **change-centric**, **event-sourced**, **graph-based**, and **evidence-driven**.
+The system is **change-centric**, **event-sourced**, **graph-based**, and **evidence-driven**.
 
 ## Architecture
 
 ```text
-Harness-neutral Factory
-  Change Graph
-  Evidence / Context / Policy
-  Work / Execution / Persistence
-  Integrations / Graph UI
-        |
-        +-- @dsh-factory/plugin-dsh
-        |       |
-        |       +-- DeepSeek Harness / Cordis
-        |
-        +-- future plugin-<agent-harness>
+private internal modules
+  domain / events / evidence / context
+  policy / work / execution / persistence
+  integrations / release / observation / graph-ui
+                |
+                v
+          @orven/core
+                |
+        +-------+--------+
+        |                |
+        v                v
+@orven/plugin-dsh   future plugin-<harness>
+        |                |
+        v                v
+DeepSeek Harness     another Harness
 ```
 
-DeepSeek Harness is the currently supported Agent Harness, not a dependency of the Factory domain/runtime.
+DeepSeek Harness is the first supported Harness, not a dependency of Orven's neutral runtime.
 
-See [Harness Integration](Docs/Architecture/Harness%20Integration.md) and [Code.md](Code.md).
+## DSH installation
 
-## Install in DeepSeek Harness
-
-After the packages are published to the configured registry:
+After publication:
 
 ```bash
-dsh plugin --profile web add @dsh-factory/plugin-dsh
+dsh plugin --profile web add @orven/plugin-dsh
 ```
 
-The DSH Bundle mounts one `factory` row and publishes `ctx.factory`.
-
-Verify the composed profile:
-
-```bash
-dsh --profile web --dump-config
-```
-
-Override persistence in the profile's `cordis.patch.yml` when needed:
-
-```yaml
-- id: factory
-  config:
-    graphId: my-project
-    persistenceDirectory: ./.factory
-```
+The DSH Bundle mounts Orven and exposes the compatibility service `ctx.factory`.
 
 ## Development
-
-Requires Node.js `^22.19.0 || >=24.0.0` and pnpm 11.
 
 ```bash
 pnpm install
@@ -59,10 +44,4 @@ pnpm check
 pnpm distribution:check
 ```
 
-To inspect the publish operation without writing to a registry:
-
-```bash
-pnpm publish:dry-run
-```
-
-CI runs on GitHub Actions. This repository does not use CNB.
+The repository owner may rename the GitHub repository separately; package metadata already targets the Orven repository identity.

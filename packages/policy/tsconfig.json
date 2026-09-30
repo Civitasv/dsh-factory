@@ -6,8 +6,14 @@
     "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
   "references": [
-    { "path": "../core" },
-    { "path": "../evidence" }
+    {
+      "path": "../domain"
+    },
+    {
+      "path": "../evidence"
+    }
   ],
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts"
+  ]
 }

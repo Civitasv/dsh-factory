@@ -6,7 +6,7 @@ import type {
   CriterionRevisionRef,
   GraphNodeRef,
   GraphRevision,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 
 export type CapabilityId = Brand<string, 'CapabilityId'>
 export type WorkId = Brand<string, 'WorkId'>

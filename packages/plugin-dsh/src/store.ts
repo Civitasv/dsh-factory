@@ -2,13 +2,13 @@ import type {
   ChangeId,
   GraphId,
   GraphRevision,
-} from '@dsh-factory/core'
+} from '@orven/core'
 import type {
   AppendRequest,
   EventEnvelope,
-} from '@dsh-factory/events'
+} from '@orven/core/events'
 
-export interface FactoryEventStore {
+export interface OrvenEventStore {
   readonly graphId: GraphId
 
   currentRevision(): GraphRevision

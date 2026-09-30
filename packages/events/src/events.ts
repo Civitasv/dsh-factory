@@ -21,7 +21,7 @@ import type {
   Relation,
   RelationId,
   Run,
-} from '@dsh-factory/core'
+} from '@orven/internal-domain'
 
 export type DomainEvent =
   | { readonly type: 'change.created'; readonly change: Change }

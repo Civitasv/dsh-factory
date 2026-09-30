@@ -3,28 +3,28 @@ import type {
   ChangeId,
   GraphId,
   GraphRevision,
-} from '@dsh-factory/core'
+} from '@orven/core'
 import {
   projectChangeGraph,
   type AppendRequest,
   type EventEnvelope,
-} from '@dsh-factory/events'
+} from '@orven/core/events'
 import {
   prepareExecution,
   type ExecutionResult,
   type PreparedExecution,
-} from '@dsh-factory/execution'
+} from '@orven/core/execution'
 import type {
   WorkItem,
   WorkerDescriptor,
-} from '@dsh-factory/work'
+} from '@orven/core/work'
 import {
   DshExecutionAdapter,
   type DshOutcomeCollector,
 } from './adapter.js'
-import type { FactoryEventStore } from './store.js'
+import type { OrvenEventStore } from './store.js'
 
-export interface FactoryPrepareWorkInput {
+export interface OrvenPrepareWorkInput {
   readonly work: WorkItem
   readonly worker: WorkerDescriptor
   readonly attempt: number
@@ -32,20 +32,20 @@ export interface FactoryPrepareWorkInput {
   readonly permissions?: readonly string[]
 }
 
-export interface FactoryExecutePreparedInput {
+export interface OrvenExecutePreparedInput {
   readonly prepared: PreparedExecution
   readonly collector: DshOutcomeCollector
   readonly signal?: AbortSignal
 }
 
-export interface FactoryExecuteWorkInput extends FactoryPrepareWorkInput {
+export interface OrvenExecuteWorkInput extends OrvenPrepareWorkInput {
   readonly collector: DshOutcomeCollector
   readonly signal?: AbortSignal
 }
 
-export class FactoryService {
+export class OrvenService {
   constructor(
-    private readonly store: FactoryEventStore,
+    private readonly store: OrvenEventStore,
     private readonly executor: DshExecutionAdapter,
     private readonly clock: () => string = () => new Date().toISOString(),
   ) {}
@@ -70,7 +70,7 @@ export class FactoryService {
     return await this.store.append(request)
   }
 
-  prepareWork(input: FactoryPrepareWorkInput): PreparedExecution {
+  prepareWork(input: OrvenPrepareWorkInput): PreparedExecution {
     return prepareExecution({
       work: input.work,
       worker: {
@@ -89,7 +89,7 @@ export class FactoryService {
   }
 
   async executePrepared(
-    input: FactoryExecutePreparedInput,
+    input: OrvenExecutePreparedInput,
   ): Promise<ExecutionResult> {
     return await this.executor.execute({
       prepared: input.prepared,
@@ -100,7 +100,7 @@ export class FactoryService {
     })
   }
 
-  async executeWork(input: FactoryExecuteWorkInput): Promise<ExecutionResult> {
+  async executeWork(input: OrvenExecuteWorkInput): Promise<ExecutionResult> {
     const prepared = this.prepareWork(input)
     return await this.executePrepared({
       prepared,

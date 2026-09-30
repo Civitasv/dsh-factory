@@ -1,63 +1,36 @@
-# Architecture Overview
+# Orven Architecture Overview
 
 ## Goal
 
-DSH Factory is a software-development system in which AI workers execute work while intent, policy, evidence, and durable change history remain explicit machine-readable state.
-
-The system is not a chain of ProductAgent -> DevAgent -> QAAgent. Traditional stages are views over a persistent Change Graph.
+Orven is a Harness-neutral AI-native software-development runtime. AI workers execute tasks while intent, policy, evidence, and durable Change history remain explicit machine-readable state.
 
 ## Layers
 
 ```text
 +--------------------------------------------------+
-| Harness-neutral Factory                          |
-| Change Graph / Context / Evidence / Gates        |
-| Policy / Work / Execution / Persistence          |
+| Private neutral modules                          |
+| Domain / Events / Evidence / Context / Policy    |
+| Work / Execution / Persistence / Integrations    |
 +--------------------------------------------------+
-| Reusable integrations / presentation             |
-| GitHub / CI / Release / Observation / Graph UI   |
+| Public neutral API: @orven/core                  |
 +--------------------------------------------------+
-| Harness adapters                                 |
-| plugin-dsh / future plugin-<harness>              |
+| Harness adapters: @orven/plugin-*                |
 +--------------------------------------------------+
-| Agent Harness                                    |
-| Agents / Sessions / Models / Tools / Sandbox     |
+| Agent Harness: DSH / future hosts                |
 +--------------------------------------------------+
 ```
 
-DeepSeek Harness is the currently supported host through `packages/plugin-dsh`. It is not a dependency of the neutral Factory layers.
+## Invariants
 
-## Foundation invariants
-
-1. No durable state transition without evidence or an explicit policy decision.
-2. No agent execution without an explicit objective and a task-specific ContextPack.
-3. No feedback remains text-only when it can be represented as structured evidence.
-4. Change is the durable aggregate; Issue, PR, CI run, Harness session, and deployment are related artifacts/runs.
-5. Agent identities are ephemeral execution concerns, not durable domain ownership.
-6. Change lifecycle is a graph and may contain feedback cycles.
-7. The core domain is independent from any Agent Harness.
-8. Harness-specific dependencies belong only in outer adapter packages.
-
-## Dependency direction
-
-Domain/runtime packages point inward. Harness adapters depend on them, never the reverse.
-
-```text
-core
- ^  ^  ^  ^
- |  |  |  |
-events evidence context work
-       \   |   /
-        execution
-            ^
-            |
-       plugin-dsh
-```
-
-Reusable GitHub/CI/Release/Observation/UI packages also remain Harness-neutral.
+1. Change is the durable center.
+2. No durable transition without Evidence or explicit policy.
+3. Context is task-specific and compiled from graph state.
+4. Global lifecycle may contain cycles; one execution plan is a DAG.
+5. Agent identity is runtime provenance, not domain ownership.
+6. Private neutral modules and `@orven/core` are independent of Agent-Harness SDKs.
+7. Harness-specific behavior belongs in outer adapter packages.
+8. Adapters consume the public Core contract rather than private modules.
 
 ## State
 
-A Change does not own a single `status = testing` field. Readable stage labels are projections derived from Gate evaluations, Findings, Runs, and Evidence.
-
-This permits states such as functional verification passed while performance verification is still running and regression verification has failed.
+Readable lifecycle/stage labels are projections from Gates, Findings, Runs, Evidence, and relations; Change does not own one mutable workflow-stage field.
