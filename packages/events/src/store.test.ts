@@ -7,6 +7,7 @@ import {
 } from '@orven/internal-domain'
 import {
   ConcurrencyConflictError,
+  GraphRevisionConflictError,
   InMemoryEventStore,
 } from './index.js'
 
@@ -107,6 +108,55 @@ describe('InMemoryEventStore', () => {
         ],
       }),
     ).toThrow(ConcurrencyConflictError)
+  })
+
+  it('rejects a stale expected Graph revision without mutating the store', () => {
+    const store = new InMemoryEventStore(graphId)
+
+    store.append({
+      changeId,
+      expectedSequence: 0,
+      expectedRevision: store.currentRevision(),
+      actor,
+      events: [
+        {
+          eventId: 'EVT-1' as EventId,
+          occurredAt: '2026-09-30T00:00:00Z',
+          event: {
+            type: 'change.created',
+            change: {
+              id: changeId,
+              kind: 'feature',
+              title: 'Graph',
+              createdAt: '2026-09-30T00:00:00Z',
+              createdBy: actor,
+            },
+          },
+        },
+      ],
+    })
+
+    expect(() =>
+      store.append({
+        changeId,
+        expectedSequence: 1,
+        expectedRevision: 0 as never,
+        actor,
+        events: [
+          {
+            eventId: 'EVT-2' as EventId,
+            occurredAt: '2026-09-30T00:00:01Z',
+            event: {
+              type: 'change.closed',
+              changeId,
+              disposition: 'completed',
+            },
+          },
+        ],
+      }),
+    ).toThrow(GraphRevisionConflictError)
+    expect(store.currentRevision()).toBe(1)
+    expect(store.currentSequence(changeId)).toBe(1)
   })
 
   it('rejects duplicate event ids', () => {
