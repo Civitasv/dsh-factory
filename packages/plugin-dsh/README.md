@@ -24,6 +24,42 @@ The bundle mounts Orven into the DSH Cordis graph, publishes `ctx.orven`, and de
 For a workspace-backed DSH Session, graph persistence defaults to `<cwd>/.orven/`.
 The plugin writes `.orven/.gitignore` so the runtime log stays local by default.
 
+## DSH Web Change Graph
+
+When the bundle is loaded in a Web-backed profile, the same package contributes a
+browser client. DSH Web gets a first-class **Orven** sidebar entry and a read-only
+main panel for the selected Session's active Change.
+
+The panel shows the active Change title/kind, graph revision, required Evidence
+coverage, derived Gate state, and the neutral Orven graph explorer. The graph is
+scoped to the active Change's connected component; selecting nodes reveals their
+domain facts and typed incoming/outgoing relations.
+
+The browser never chooses a workspace or Change id. It supplies only the selected
+DSH Session id to the authenticated Host route, and the Host resolves the Session's
+durable Orven binding. Refresh uses graph revision ETags and polls only while the
+Orven panel is selected and the page is visible. A failed refresh keeps the last
+good graph visible and marks it stale.
+
+### Local acceptance
+
+From an Orven checkout on the Feature branch:
+
+~~~powershell
+.\scripts\orven-local.ps1 install
+.\scripts\orven-local.ps1 run
+~~~
+
+Create or select a DSH Session for a workspace, ask the agent to begin a non-trivial
+Orven Change, then open **Orven** in the left sidebar. To rebuild the installed
+package after changing the checkout:
+
+~~~powershell
+.\scripts\orven-local.ps1 update
+~~~
+
+The local helper remains manual by design; it does not watch Git or source changes.
+
 Guided mode tells agents to create explicit Criteria before non-trivial workspace
 mutation, ground completion in Artifact-backed Evidence, and re-check the Gate before
 claiming completion. Read-only/trivial work is left alone. To expose the tools without

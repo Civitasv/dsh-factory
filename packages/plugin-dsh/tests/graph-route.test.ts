@@ -136,6 +136,28 @@ describe('Orven graph route', () => {
     })
   })
 
+
+  it('rejects a durable binding whose workspace disagrees with the Session cwd', async () => {
+    const { ctx, root } = harness(
+      {
+        changeId: 'change:test',
+        workspace: process.cwd(),
+      },
+      process.cwd() + '-other',
+    )
+    const response = await graphRouteInternals.graphResponse(
+      ctx as never,
+      root as never,
+      new Request('http://localhost/api/orven/graph?sessionId=session%3Atest'),
+    )
+
+    expect(response.status).toBe(409)
+    expect(await response.json()).toMatchObject({
+      schema: 'orven.graph.error.v1',
+      code: 'session-workspace-mismatch',
+    })
+  })
+
   it('supports HEAD without returning a response body', async () => {
     const { ctx, root } = harness({
       changeId: null,
