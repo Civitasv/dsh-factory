@@ -14,7 +14,7 @@
 | GitHub / CI | Features 10–11 | `packages/integration-*/` |
 | Release / Observation | Features 12–13 | `packages/release/`, `packages/observation/` |
 | Graph UI | Feature-14 | `packages/graph-ui/` |
-| DSH adapter | Features 15,17 | `packages/plugin-dsh/` |
+| DSH adapter / Change loop | Features 15,17,19–20 | `packages/plugin-dsh/` |
 | Distribution | Feature-17 | `scripts/verify-distribution.mjs` |
 
 ## Dependency direction

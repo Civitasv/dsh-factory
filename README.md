@@ -44,6 +44,9 @@ orven_record_evidence
 ```
 
 Workspace-backed sessions persist their Change Graph under `<cwd>/.orven/` by default.
+The DSH Bundle defaults to guided orchestration: for non-trivial workspace mutations the
+agent is instructed to establish Criteria, execute/observe work, attach Artifact-backed
+Evidence, and re-check the Gate before reporting completion.
 
 ## Development
 

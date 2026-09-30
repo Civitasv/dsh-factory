@@ -109,6 +109,16 @@ async function appendChangeEvents(
     : new Error('Orven Change append did not converge')
 }
 
+const ORVEN_DELEGATED_WORKER_PREFIX = 'orven:exec:'
+
+function assertCoordinatorAgent(agent: Agent, operation: string): void {
+  if (String(agent.id).startsWith(ORVEN_DELEGATED_WORKER_PREFIX)) {
+    throw new Error(
+      `${operation} is not available inside an Orven delegated worker. Execute the assigned objective directly instead of recursively orchestrating another Orven Change/Run.`,
+    )
+  }
+}
+
 function requiredWorkspace(agent: Agent): string {
   const cwd = agent.session.header.cwd
   if (cwd === undefined || cwd.trim() === '') {
@@ -179,6 +189,7 @@ export async function beginChange(
   if (agent === undefined) {
     throw new Error('orven_begin_change requires an owning DSH Agent session.')
   }
+  assertCoordinatorAgent(agent, 'orven_begin_change')
 
   const title = input.title.trim()
   if (title === '') throw new Error('Orven Change title must be non-empty.')
@@ -799,6 +810,7 @@ export async function executeChangeWork(
   objectiveInput: string,
   signal?: AbortSignal,
 ): Promise<ExecuteResult> {
+  if (agent !== undefined) assertCoordinatorAgent(agent, 'orven_execute')
   const active = await activeChangeContext(ctx, root, agent)
   const objective = objectiveInput.trim()
   if (objective === '') throw new Error('Orven Work objective must be non-empty.')

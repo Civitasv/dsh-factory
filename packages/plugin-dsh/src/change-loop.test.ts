@@ -66,8 +66,8 @@ function context(): Context {
   } as unknown as Context
 }
 
-function agent(workspace: string): Agent {
-  const id = SessionId('orven-test-session')
+function agent(workspace: string, sessionId = 'orven-test-session'): Agent {
+  const id = SessionId(sessionId)
   const session = Session.create(
     id,
     undefined,
@@ -99,6 +99,20 @@ function rootWithWorkspaceStore(): OrvenService {
 }
 
 describe('DSH durable Change loop', () => {
+  it('rejects recursive Change orchestration from an Orven delegated worker', async () => {
+    const workspace = await mkdtemp(join(tmpdir(), 'orven-recursive-worker-'))
+    try {
+      const ctx = context()
+      const worker = agent(workspace, 'orven:exec:work:test:1')
+      await expect(beginChange(ctx, rootWithWorkspaceStore(), worker, {
+        title: 'Recursive worker change',
+        criteria: [{ statement: 'Must never be created' }],
+      })).rejects.toThrow('delegated worker')
+    } finally {
+      await rm(workspace, { recursive: true, force: true })
+    }
+  })
+
   it('reopens workspace-local graph state from JSONL persistence', async () => {
     const workspace = await mkdtemp(join(tmpdir(), 'orven-workspace-'))
     try {
