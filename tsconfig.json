@@ -5,6 +5,7 @@
     { "path": "./packages/context" },
     { "path": "./packages/evidence" },
     { "path": "./packages/events" },
+    { "path": "./packages/policy" },
     { "path": "./packages/runtime-dsh" }
   ]
 }

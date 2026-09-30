@@ -18,8 +18,10 @@ import type {
 } from './ids.js'
 import type { JsonValue } from './json.js'
 
+export type ActorKind = 'human' | 'agent' | 'system'
+
 export interface ActorRef {
-  readonly kind: 'human' | 'agent' | 'system'
+  readonly kind: ActorKind
   readonly id: string
 }
 
@@ -143,6 +145,7 @@ export type FindingType =
   | 'release_failure'
   | 'production_regression'
 
+export type FindingSeverity = 'low' | 'medium' | 'high' | 'critical'
 export type FindingLifecycleState = 'open' | 'reproduced' | 'resolved' | 'invalid'
 
 export interface Finding {
@@ -151,7 +154,7 @@ export interface Finding {
   readonly expected: string
   readonly actual: string
   readonly criterion?: CriterionRevisionRef
-  readonly severity: 'low' | 'medium' | 'high' | 'critical'
+  readonly severity: FindingSeverity
   readonly confidence: number
   readonly openedAt: string
   readonly openedBy: ActorRef
