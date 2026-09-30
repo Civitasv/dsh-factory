@@ -11,6 +11,7 @@
     { "path": "./packages/persistence" },
     { "path": "./packages/integration-github" },
     { "path": "./packages/integration-ci" },
+    { "path": "./packages/release" },
     { "path": "./packages/runtime-dsh" }
   ]
 }

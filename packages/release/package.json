@@ -1,0 +1,20 @@
+{
+  "name": "@dsh-factory/release",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@dsh-factory/core": "workspace:*",
+    "@dsh-factory/evidence": "workspace:*",
+    "@dsh-factory/policy": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}
