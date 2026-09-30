@@ -402,7 +402,7 @@ export class OrvenApplication {
         && relation.source.id === changeId
         && relation.target.kind === 'criterion'
       )
-      .map(relation => relation.target.id)
+      .map(relation => relation.target.id as CriterionId)
 
     const invalidated = new Set(
       snapshot.evidenceInvalidations.map(record => record.evidenceId),
@@ -497,7 +497,7 @@ export class OrvenApplication {
         && relation.target.kind === 'change'
         && relation.target.id === changeId
       )
-      .map(relation => relation.source.id)
+      .map(relation => relation.source.id as RunId)
     const runs = runIds
       .map(runId => runNode(snapshot, runId))
       .filter((run): run is Run => run !== undefined)
