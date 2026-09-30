@@ -49,7 +49,8 @@ try{
     const runtime=JSON.stringify({dependencies:packed.dependencies,peerDependencies:packed.peerDependencies,optionalDependencies:packed.optionalDependencies})
     if(runtime.includes('@orven/internal-')) fail(packed.name+' depends on private packages')
     const list=(await run('tar',['-tzf',tarballs[manifest.name]])).stdout
-    const leaked=list.split('\\n').filter(file=>/package\\/(src|tests)\\//.test(file)||file.endsWith('/tsconfig.json')||file.includes('.tsbuildinfo')||file.includes('.test.')||file.includes('.spec.'))\n    if(leaked.length>0) fail(packed.name+' leaked development files: '+leaked.join(', '))
+    const leaked=list.split('\\n').filter(file=>/package\\/(src|tests)\\//.test(file)||file.endsWith('/tsconfig.json')||file.includes('.tsbuildinfo')||file.includes('.test.')||file.includes('.spec.'))
+    if(leaked.length>0) fail(packed.name+' leaked development files: '+leaked.join(', '))
     if(!list.includes('package/dist/index.js')||!list.includes('package/dist/index.d.ts')) fail(packed.name+' missing compiled entry')
     if(packed.name==='@orven/core'){
       if(runtime.includes('@deepseek-ai/')||runtime.toLowerCase().includes('cordis')) fail('core leaked Harness dependencies')
