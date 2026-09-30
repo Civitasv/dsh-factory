@@ -13,4 +13,4 @@ Use this as the first navigation surface for humans and agents.
 | DSH Runtime | `Docs/Specs/Feature-08 DSH Runtime Integration.md` | `packages/runtime-dsh/` |
 | Persistence | `Docs/Specs/Feature-09 Persistence.md` | `packages/persistence/` |
 | GitHub Integration | `Docs/Specs/Feature-10 GitHub Integration.md` | `packages/integration-github/` |
-| Validation | `Docs/Development/Validation.md` | `.github/workflows/ci.yml` |
+| CI/Test Integration | `Docs/Specs/Feature-11 CI and Test Integration.md` | `packages/integration-ci/` |
