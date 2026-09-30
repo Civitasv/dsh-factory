@@ -47,9 +47,16 @@ export function registerOrvenModelTools(
   service: OrvenService,
 ): void {
   const captures = new ExecutionCaptureRegistry()
+  const pendingCaptures = new Set<Promise<void>>()
+
+  const flushCaptures = async (): Promise<void> => {
+    if (pendingCaptures.size === 0) return
+    await Promise.all([...pendingCaptures])
+  }
 
   ctx.on('tools/result', (exec, result) => {
-    void recordObservedToolArtifact(
+    if (exec.name.startsWith('orven_')) return
+    const task = recordObservedToolArtifact(
       ctx,
       service,
       captures,
@@ -57,7 +64,10 @@ export function registerOrvenModelTools(
       result,
     ).catch((error: unknown) => {
       ctx.logger.warn('Orven tool-result capture failed: %s', String(error))
+    }).finally(() => {
+      pendingCaptures.delete(task)
     })
+    pendingCaptures.add(task)
   })
 
   ctx.tools.register(defineTool({
@@ -130,6 +140,7 @@ export function registerOrvenModelTools(
     parameters: {},
     output: genericOutput,
     async execute(_args, exec) {
+      await flushCaptures()
       return outputRecord(await status(ctx, service, exec.agent))
     },
     isConcurrencySafe: () => true,
@@ -165,6 +176,7 @@ export function registerOrvenModelTools(
     },
     output: genericOutput,
     async execute(args, exec) {
+      await flushCaptures()
       return outputRecord(await recordEvidence(ctx, service, exec.agent, {
         criterionId: args.criterionId,
         artifactIds: args.artifactIds,
@@ -187,6 +199,7 @@ export function registerOrvenModelTools(
     },
     output: genericOutput,
     async execute(args, exec) {
+      await flushCaptures()
       return outputRecord(await executeChangeWork(
         ctx,
         service,

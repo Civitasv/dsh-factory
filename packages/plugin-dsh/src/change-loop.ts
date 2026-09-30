@@ -328,30 +328,29 @@ function criteriaForChange(
   ownedChangeId: ChangeId,
 ): readonly CriterionRevision[] {
   const snapshot = service.snapshot()
-  const criterionIds = new Set(
-    snapshot.relations
-      .filter(
-        relation =>
-          relation.kind === 'has_criterion' &&
-          relation.source.kind === 'change' &&
-          relation.source.id === ownedChangeId &&
-          relation.target.kind === 'criterion',
-      )
-      .map(relation => relation.target.id),
-  )
+  const criterionIds = snapshot.relations
+    .filter(
+      relation =>
+        relation.kind === 'has_criterion' &&
+        relation.source.kind === 'change' &&
+        relation.source.id === ownedChangeId &&
+        relation.target.kind === 'criterion',
+    )
+    .map(relation => relation.target.id)
 
+  const criterionSet = new Set(criterionIds)
   const latest = new Map<CriterionId, CriterionRevision>()
   for (const revision of snapshot.criterionRevisions) {
-    if (!criterionIds.has(revision.criterionId)) continue
+    if (!criterionSet.has(revision.criterionId)) continue
     const current = latest.get(revision.criterionId)
     if (current === undefined || revision.revision > current.revision) {
       latest.set(revision.criterionId, revision)
     }
   }
 
-  return [...latest.values()].sort((left, right) =>
-    String(left.criterionId).localeCompare(String(right.criterionId)),
-  )
+  return criterionIds
+    .map(id => latest.get(id))
+    .filter((revision): revision is CriterionRevision => revision !== undefined)
 }
 
 export interface StatusResult {
@@ -452,7 +451,7 @@ export async function status(
   )
   const gateState: StatusResult['gateState'] = requiredFailed
     ? 'failed'
-    : required.length > 0 && requiredComplete === required.length
+    : requiredComplete === required.length
       ? 'satisfied'
       : 'pending'
 
