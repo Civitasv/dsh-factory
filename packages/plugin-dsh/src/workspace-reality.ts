@@ -119,17 +119,6 @@ export async function captureWorkspaceReality(
       .digest('hex')
 
     const artifact: Artifact = {
-      .update('git-working-tree-v1\0')
-      .update(head)
-      .update('\0')
-      .update(unstaged)
-      .update('\0')
-      .update(staged)
-      .update('\0')
-      .update(status)
-      .digest('hex')
-
-    const artifact: Artifact = {
       id: artifactId(digest),
       type: 'workspace-reality',
       uri: pathToFileURL(workspace).href,
