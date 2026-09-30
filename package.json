@@ -15,6 +15,9 @@
     "lint": "oxlint packages",
     "test": "vitest run",
     "test:watch": "vitest",
+    "distribution:verify": "node scripts/verify-distribution.mjs",
+    "distribution:check": "pnpm build && pnpm distribution:verify",
+    "publish:dry-run": "pnpm build && pnpm -r --filter './packages/*' publish --dry-run --no-git-checks",
     "check": "pnpm typecheck && pnpm lint && pnpm test"
   },
   "devDependencies": {

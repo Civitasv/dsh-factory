@@ -1,21 +1,42 @@
 {
   "name": "@dsh-factory/plugin-dsh",
-  "version": "0.0.0",
-  "private": true,
+  "description": "DeepSeek Harness bundle and Cordis adapter for DSH Factory.",
+  "version": "0.1.0",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Civitasv/dsh-factory.git",
+    "directory": "packages/plugin-dsh"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
     }
   },
   "dependencies": {
-    "@dsh-factory/context": "workspace:*",
-    "@dsh-factory/core": "workspace:*",
-    "@dsh-factory/events": "workspace:*",
-    "@dsh-factory/execution": "workspace:*",
-    "@dsh-factory/persistence": "workspace:*",
-    "@dsh-factory/work": "workspace:*"
+    "@dsh-factory/context": "workspace:^",
+    "@dsh-factory/core": "workspace:^",
+    "@dsh-factory/events": "workspace:^",
+    "@dsh-factory/execution": "workspace:^",
+    "@dsh-factory/persistence": "workspace:^",
+    "@dsh-factory/work": "workspace:^"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "4.0.4",

@@ -1,0 +1,7 @@
+# DSH Factory bundle layer.
+# DSH core services remain owned by the selected base-backed profile.
+- insert:
+    - id: factory
+      name: '@dsh-factory/plugin-dsh'
+      config:
+        graphId: factory

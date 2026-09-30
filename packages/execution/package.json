@@ -1,18 +1,33 @@
 {
   "name": "@dsh-factory/execution",
-  "version": "0.0.0",
-  "private": true,
+  "description": "Harness-neutral Work execution and freshness protocol for DSH Factory.",
+  "version": "0.1.0",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Civitasv/dsh-factory.git",
+    "directory": "packages/execution"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
   },
   "dependencies": {
-    "@dsh-factory/context": "workspace:*",
-    "@dsh-factory/core": "workspace:*",
-    "@dsh-factory/work": "workspace:*"
+    "@dsh-factory/context": "workspace:^",
+    "@dsh-factory/core": "workspace:^",
+    "@dsh-factory/work": "workspace:^"
   },
   "scripts": {
     "build": "tsc -b"
