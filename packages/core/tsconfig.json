@@ -2,8 +2,51 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist",
-    "tsBuildInfoFile": "dist/.tsbuildinfo"
+    "outDir": ".build",
+    "tsBuildInfoFile": ".build/.tsbuildinfo"
   },
-  "include": ["src/**/*.ts"]
+  "references": [
+    {
+      "path": "../domain"
+    },
+    {
+      "path": "../events"
+    },
+    {
+      "path": "../evidence"
+    },
+    {
+      "path": "../context"
+    },
+    {
+      "path": "../policy"
+    },
+    {
+      "path": "../work"
+    },
+    {
+      "path": "../execution"
+    },
+    {
+      "path": "../persistence"
+    },
+    {
+      "path": "../integration-github"
+    },
+    {
+      "path": "../integration-ci"
+    },
+    {
+      "path": "../release"
+    },
+    {
+      "path": "../observation"
+    },
+    {
+      "path": "../graph-ui"
+    }
+  ],
+  "include": [
+    "src/**/*.ts"
+  ]
 }
