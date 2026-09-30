@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { ChangeGraphSnapshot } from '@orven/core'
 import { graphRouteInternals } from '../src/graph-route.js'
+import { ORVEN_GRAPH_PATH, ORVEN_GRAPH_ROUTE } from '../src/graph-wire.js'
 
 const actor = { kind: 'system', id: 'test' } as const
 
@@ -53,6 +54,11 @@ function harness(binding: {
 }
 
 describe('Orven graph route', () => {
+  it('keeps Host registration absolute and browser navigation document-relative', () => {
+    expect(ORVEN_GRAPH_PATH).toBe('/api/orven/graph')
+    expect(ORVEN_GRAPH_ROUTE).toBe('api/orven/graph')
+  })
+
   it('resolves Session authority, returns graph v1, and honors ETag', async () => {
     const { ctx, root } = harness({
       changeId: 'change:test',
