@@ -6,6 +6,7 @@ Use this as the first navigation surface for humans and agents.
 | --- | --- | --- |
 | Top-level architecture | `Docs/Architecture/Overview.md` | repository-wide |
 | Domain vocabulary | `Docs/Architecture/Domain Model.md` | `packages/core/` |
+| Change Graph | `Docs/Specs/Feature-02 Change Graph.md` | `packages/core/`, `packages/events/` |
 | Event sourcing boundary | `Docs/Architecture/Overview.md` | `packages/events/` |
 | DSH/Cordis integration | `Docs/Architecture/DSH Integration.md` | `packages/runtime-dsh/` |
 | Repository foundation | `Docs/Specs/Feature-01 Repository Foundation.md` | `packages/core/`, `packages/events/`, `packages/runtime-dsh/` |
@@ -27,7 +28,8 @@ packages/runtime-dsh
 
 ## Change routing
 
-- Change / Evidence / Finding / Gate / Run / ContextPack shape -> `packages/core`.
-- Durable event vocabulary and event-stream invariants -> `packages/events`.
+- Change / Criterion / Evidence / Finding / Gate / Run / Relation types -> `packages/core`.
+- Change Graph relation invariants -> `packages/core`.
+- Event vocabulary, optimistic concurrency and graph projection -> `packages/events`.
 - Cordis plugin lifecycle and DSH integration -> `packages/runtime-dsh`.
 - Product/Dev/QA stage views -> future presentation packages; do not encode them into core workflow state.
