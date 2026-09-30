@@ -39,24 +39,24 @@ jobs:
 
       - name: Pack public packages
         run: |
-          mkdir -p .release
-          pnpm --dir packages/core pack --pack-destination "$GITHUB_WORKSPACE/.release"
-          pnpm --dir packages/plugin-dsh pack --pack-destination "$GITHUB_WORKSPACE/.release"
-          ls -lah .release
+          mkdir -p release-artifacts
+          pnpm --dir packages/core pack --pack-destination "$GITHUB_WORKSPACE/release-artifacts"
+          pnpm --dir packages/plugin-dsh pack --pack-destination "$GITHUB_WORKSPACE/release-artifacts"
+          ls -lah release-artifacts
 
       - name: Upload packed packages
         uses: actions/upload-artifact@v4
         with:
           name: orven-0.1.0-packages
-          path: .release/*.tgz
+          path: release-artifacts/*.tgz
           if-no-files-found: error
 
       - name: Publish @orven/core
-        run: npm publish "$(ls .release/orven-core-*.tgz)" --access public --provenance
+        run: npm publish "$(ls release-artifacts/orven-core-*.tgz)" --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @orven/plugin-dsh
-        run: npm publish "$(ls .release/orven-plugin-dsh-*.tgz)" --access public --provenance
+        run: npm publish "$(ls release-artifacts/orven-plugin-dsh-*.tgz)" --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
