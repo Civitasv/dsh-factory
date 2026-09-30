@@ -15,3 +15,4 @@ Use this as the first navigation surface for humans and agents.
 | GitHub Integration | `Docs/Specs/Feature-10 GitHub Integration.md` | `packages/integration-github/` |
 | CI/Test Integration | `Docs/Specs/Feature-11 CI and Test Integration.md` | `packages/integration-ci/` |
 | Release & Deployment | `Docs/Specs/Feature-12 Release and Deployment.md` | `packages/release/` |
+| Production Observation | `Docs/Specs/Feature-13 Production Observation.md` | `packages/observation/` |
