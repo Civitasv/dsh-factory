@@ -328,17 +328,19 @@ function criteriaForChange(
   ownedChangeId: ChangeId,
 ): readonly CriterionRevision[] {
   const snapshot = service.snapshot()
-  const criterionIds = snapshot.relations
-    .filter(
-      relation =>
-        relation.kind === 'has_criterion' &&
-        relation.source.kind === 'change' &&
-        relation.source.id === ownedChangeId &&
-        relation.target.kind === 'criterion',
-    )
-    .map(relation => relation.target.id)
+  const criterionIds: CriterionId[] = []
+  for (const relation of snapshot.relations) {
+    if (
+      relation.kind === 'has_criterion' &&
+      relation.source.kind === 'change' &&
+      relation.source.id === ownedChangeId &&
+      relation.target.kind === 'criterion'
+    ) {
+      criterionIds.push(relation.target.id)
+    }
+  }
 
-  const criterionSet = new Set(criterionIds)
+  const criterionSet = new Set<CriterionId>(criterionIds)
   const latest = new Map<CriterionId, CriterionRevision>()
   for (const revision of snapshot.criterionRevisions) {
     if (!criterionSet.has(revision.criterionId)) continue
