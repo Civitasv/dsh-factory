@@ -3,6 +3,12 @@ import type { ChangeGraphSnapshot } from '@orven/core'
 export const ORVEN_GRAPH_SCHEMA = 'orven.graph.v1' as const
 export const ORVEN_GRAPH_ERROR_SCHEMA = 'orven.graph.error.v1' as const
 
+/** Absolute Host registration key under DSH's shared /api transport. */
+export const ORVEN_GRAPH_PATH = '/api/orven/graph' as const
+
+/** Document-relative browser route so DSH keeps working behind a mounted prefix. */
+export const ORVEN_GRAPH_ROUTE = ORVEN_GRAPH_PATH.slice(1)
+
 export type OrvenGraphGateState = 'pending' | 'satisfied' | 'failed'
 
 export interface OrvenGraphCoverageDto {

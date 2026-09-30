@@ -1,6 +1,7 @@
 import {
   isOrvenGraphDto,
   isOrvenGraphErrorDto,
+  ORVEN_GRAPH_ROUTE,
   type OrvenGraphDto,
   type OrvenGraphErrorDto,
 } from '../graph-wire.js'
@@ -215,7 +216,7 @@ export class OrvenGraphController {
       const headers = new Headers()
       if (this.#etag !== undefined) headers.set('if-none-match', this.#etag)
       const response = await fetch(
-        `/api/orven/graph?sessionId=${encodeURIComponent(sessionId)}`,
+        `${ORVEN_GRAPH_ROUTE}?sessionId=${encodeURIComponent(sessionId)}`,
         {
           method: 'GET',
           credentials: 'same-origin',
@@ -233,7 +234,21 @@ export class OrvenGraphController {
         return
       }
 
-      const payload: unknown = await response.json()
+      const body = await response.text()
+      let payload: unknown
+      try {
+        payload = JSON.parse(body)
+      } catch {
+        this.#publishFailure(
+          sessionId,
+          transportError(
+            response.ok
+              ? `Orven graph request returned invalid JSON with HTTP ${response.status}.`
+              : `Orven graph request failed with HTTP ${response.status}.`,
+          ),
+        )
+        return
+      }
       if (!response.ok) {
         const error = isOrvenGraphErrorDto(payload)
           ? payload
